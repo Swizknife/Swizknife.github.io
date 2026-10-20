@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soumya Sharma</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Soumya Sharma: Edge AI and ML engineer, B.Tech ECE at BIT Mesra. ESP32 firmware, on-prem inference, RAG systems and signal processing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a component datasheet. Sticky part-number bar, hero with a key-specs table, then sections whose projects each carry a Parameter / Value / Conditions spec table. */
+:root {
+  --bg: #0e1714;
+  --surface: #13201b;
+  --line: #24372f;
+  --fg: #e3ebe6;
+  --muted: #93a69c;
+  --edge: #e29b5b;
+  --ai: #aa9ff3;
+  --trace: #1b2c25;
+  --pad: #2a3f36;
+  --header: rgb(14 23 20 / 0.86);
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
+    --edge: #a2541a; --ai: #5844c2; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
+  --edge: #a2541a; --ai: #5844c2; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
+  color-scheme: light;
+}
+
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--accent, var(--edge)); }
+:focus-visible { outline: 2px solid var(--edge); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+.wrap {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.label {
+  font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* Part-number bar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--header);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.bar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.mark {
+  display: inline-grid; place-items: center; width: 34px; height: 34px; flex: none;
+  border: 1.5px solid var(--fg); border-radius: 3px;
+  font-family: var(--f-display); font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em;
+  text-decoration: none;
+}
+.partno { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.partno b { font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
+.partno span { font-family: var(--f-mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.bar nav { display: flex; gap: 18px; margin-left: auto; font-size: 0.9rem; }
+.bar nav a { text-decoration: none; color: var(--muted); }
+.bar nav a:hover { color: var(--fg); }
+
+.lens {
+  display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px;
+  background: var(--surface); flex: none;
+}
+.lens button {
+  font: 500 0.82rem/1 var(--f-body); color: var(--muted);
+  background: none; border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer;
+  white-space: nowrap;
+}
+.lens button:hover { color: var(--fg); }
+.lens button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.lens button[data-set="edge"][aria-pressed="true"] { background: var(--edge); }
+.lens button[data-set="ai"][aria-pressed="true"] { background: var(--ai); }
+.lens .s { display: none; }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+#traces {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
+  mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
+}
+.hero .wrap {
+  position: relative; display: grid; gap: 40px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  padding-block: 64px 56px; align-items: start;
+}
+.hero h1 {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(2.9rem, 7.4vw, 5.4rem); line-height: 0.92; letter-spacing: -0.015em;
+  margin-top: 14px;
+}
+.role { margin-top: 18px; font-size: 1.2rem; font-weight: 500; }
+.role .edge-t { color: var(--edge); }
+.role .ai-t { color: var(--ai); }
+.school { margin-top: 4px; color: var(--muted); font-size: 0.95rem; }
+.pitch { margin-top: 20px; max-width: 54ch; font-size: 1.05rem; }
+.links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--surface); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+  color: var(--fg); cursor: pointer; font-family: var(--f-body);
+}
+.btn:hover { border-color: var(--muted); color: var(--fg); }
+.btn.solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn.solid:hover { color: var(--bg); opacity: 0.9; }
+.email { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.email code { font-family: var(--f-mono); font-size: 0.85rem; color: var(--muted); user-select: all; overflow-wrap: anywhere; }
+.copy { font: 500 0.78rem var(--f-mono); padding: 5px 9px; }
+
+.specs {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  padding: 18px 18px 8px; min-width: 0;
+}
+.specs-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.specs-head h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.1rem; }
+
+table.st { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.st th {
+  text-align: left; font: 500 0.66rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line);
+}
+.st td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.st tr:last-child td { border-bottom: 0; }
+.st td:nth-child(2) { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.st td:nth-child(3) { color: var(--muted); font-size: 0.8rem; }
+.specs .st td:nth-child(2) { font-size: 0.95rem; }
+.st tr[data-lens="edge"] td:nth-child(2) { color: var(--edge); }
+.st tr[data-lens="ai"] td:nth-child(2) { color: var(--ai); }
+
+/* Sections */
+section.block { padding-block: 72px 8px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
+.sec-head h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.7rem, 3.6vw, 2.3rem); letter-spacing: -0.005em; margin-top: 6px; }
+.sec-head p { color: var(--muted); max-width: 52ch; font-size: 0.95rem; }
+
+.pin {
+  display: inline-block; font: 500 0.64rem/1 var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 6px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap;
+}
+.pin.edge { color: var(--edge); }
+.pin.ai { color: var(--ai); }
+.pins { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+
+/* Experience */
+.role-row {
+  display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 8px 32px;
+  padding-block: 26px; border-top: 1px solid var(--line);
+}
+.role-row:last-child { border-bottom: 1px solid var(--line); }
+.when { font-family: var(--f-mono); font-size: 0.82rem; color: var(--muted); padding-top: 4px; }
+.role-row h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.35rem; }
+.role-row .sub { color: var(--muted); font-size: 0.93rem; margin-top: 2px; }
+.bullets { margin-top: 14px; display: grid; gap: 10px; max-width: 74ch; }
+.bullets li { position: relative; padding-left: 20px; }
+.bullets li::before {
+  content: ""; position: absolute; left: 2px; top: 0.62em; width: 8px; height: 8px;
+  border-radius: 50%; border: 1.5px solid var(--muted);
+}
+.bullets li[data-lens="edge"]::before { border-color: var(--edge); }
+.bullets li[data-lens="ai"]::before { border-color: var(--ai); }
+.bullets li[data-lens="edge ai"]::before { border-color: var(--fg); }
+
+/* Project cards */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.card {
+  display: flex; flex-direction: column; gap: 14px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px;
+}
+.card-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.card h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.32rem; line-height: 1.15; }
+.ctx { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+.card p.desc { font-size: 0.95rem; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; }
+.stack span {
+  font: 0.72rem var(--f-mono); color: var(--muted); padding: 3px 7px;
+  border: 1px solid var(--line); border-radius: 3px;
+}
+.card-foot { margin-top: auto; padding-top: 4px; font-size: 0.86rem; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card-foot a { font-weight: 500; }
+.card-foot .status { color: var(--muted); font-family: var(--f-mono); font-size: 0.75rem; padding-top: 2px; }
+.tw { overflow-x: auto; }
+
+/* More repos */
+.repos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; }
+.repos li { padding: 14px 0; border-top: 1px solid var(--line); display: grid; gap: 4px; min-width: 0; }
+.repos a { font-family: var(--f-mono); font-size: 0.86rem; font-weight: 500; overflow-wrap: anywhere; }
+.repos span { color: var(--muted); font-size: 0.9rem; }
+.all-repos { margin-top: 20px; }
+
+/* Skills */
+.skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; }
+.skills h3 { font: 500 0.72rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.skill {
+  font-size: 0.86rem; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--line);
+  background: var(--surface); transition: opacity 0.2s ease;
+}
+.skill[data-lens="edge"] { border-left: 3px solid var(--edge); }
+.skill[data-lens="ai"] { border-left: 3px solid var(--ai); }
+.skill.dim { opacity: 0.28; }
+
+/* Two-up */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.two h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.2rem; margin-bottom: 14px; }
+.facts { display: grid; gap: 12px; }
+.facts li { padding-top: 12px; border-top: 1px solid var(--line); }
+.facts li b { font-weight: 600; }
+.facts .meta { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+
+footer { margin-top: 88px; border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 40px 56px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+footer h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+footer p { color: var(--muted); margin-top: 8px; max-width: 52ch; }
+.foot-note { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); text-align: right; }
+
+@media (max-width: 940px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 44px 40px; }
+  .grid, .repos, .two { grid-template-columns: minmax(0, 1fr); }
+  .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bar nav { display: none; }
+  .lens { margin-left: auto; }
+}
+@media (max-width: 620px) {
+  .role-row { grid-template-columns: minmax(0, 1fr); }
+  .skills { grid-template-columns: minmax(0, 1fr); }
+  .lens .l { display: none; }
+  .lens .s { display: inline; }
+  .partno span { display: none; }
+  footer .wrap { grid-template-columns: minmax(0, 1fr); }
+  .foot-note { text-align: left; }
+  .card { padding: 18px; }
+  .st td:nth-child(2) { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .skill { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="Back to top">SS</a>
+    <div class="partno"><b>Soumya Sharma</b><span>SS-28 · Edge AI &amp; ML · Rev. Oct 2026</span></div>
+    <nav aria-label="Sections">
+      <a href="#experience">Experience</a>
+      <a href="#work">Work</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="lens" role="group" aria-label="Show work for">
+      <button type="button" id="lens-all" data-set="all" aria-pressed="true">All</button>
+      <button type="button" id="lens-edge" data-set="edge" aria-pressed="false"><span class="l">Edge AI &amp; Embedded</span><span class="s">Edge</span></button>
+      <button type="button" id="lens-ai" data-set="ai" aria-pressed="false"><span class="l">AI-ML &amp; GenAI</span><span class="s">AI-ML</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <canvas id="traces" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div>
+        <div class="label">Datasheet · B.Tech ECE · Class of 2028</div>
+        <h1>Soumya<br>Sharma</h1>
+        <p class="role"><span class="edge-t">Edge AI</span> &amp; <span class="ai-t">ML</span> Engineer</p>
+        <p class="school">Electronics &amp; Communication Engineering, BIT Mesra (Patna Campus)</p>
+        <p class="pitch">I build ML systems that run on hardware I can touch: ESP32-S3 firmware that streams camera and audio, on-prem inference on an NVIDIA DGX Spark, and retrieval systems that answer from a local knowledge graph before they ever call an LLM.</p>
+        <div class="links">
+          <a class="btn solid" href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/soumyasharma427" target="_blank" rel="noopener">LinkedIn ↗</a>
+<!--pages-only-->
+          <a class="btn" href="Soumya_Sharma_edge.pdf" target="_blank" rel="noopener">Resume · Edge AI (PDF)</a>
+          <a class="btn" href="Soumya_Sharma_ai.pdf" target="_blank" rel="noopener">Resume · AI-ML (PDF)</a>
+<!--/pages-only-->
+        </div>
+        <div class="email">
+          <code id="email-text">btech15109.24@bitmesra.ac.in</code>
+          <button type="button" class="btn copy" id="copy-email">Copy email</button>
+        </div>
+      </div>
+
+      <div class="specs">
+        <div class="specs-head"><h2>Key specifications</h2><span class="label">With conditions</span></div>
+        <div class="tw">
+          <table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr data-lens="edge ai"><td>Vision inference</td><td>60–70 ms/frame</td><td>ONNX Runtime chain, 5 FPS, 0 dropped frames</td></tr>
+              <tr data-lens="ai"><td>Entity resolution</td><td>F0.5 0.968</td><td>Amazon ML Challenge 2026, public leaderboard</td></tr>
+              <tr data-lens="ai"><td>Exact-fact answers</td><td>0.02–0.13 s</td><td>Knowledge-graph tier, vs 20–110 s via the LLM</td></tr>
+              <tr data-lens="edge ai"><td>Event classification</td><td>0.84</td><td>Balanced accuracy on an independent test day, vs 0.55 baseline</td></tr>
+              <tr data-lens="edge"><td>MPPT tracking</td><td>99.37%</td><td>Mean of 10 scenarios in digital-twin simulation, vs 96.89% P&amp;O</td></tr>
+              <tr data-lens="edge"><td>Peak-search trigger</td><td>98.6%</td><td>Test accuracy of a ~770-weight MLP, 31k samples</td></tr>
+              <tr data-lens="edge"><td>Local LLM speed</td><td>~21 tok/s</td><td>llama3.2:1b on a CPU-only machine</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Experience</div><h2>Internship and research</h2></div>
+        <p>Bullet markers show the track: <span class="pin edge">Edge</span> <span class="pin ai">AI-ML</span>, and a neutral marker for both.</p>
+      </div>
+
+      <div class="role-row">
+        <div class="when">Sep 2026 – Nov 2026<br>India</div>
+        <div>
+          <h3>NS Apps Innovation</h3>
+          <p class="sub">AI/ML &amp; React Developer Intern</p>
+          <ul class="bullets">
+            <li data-lens="edge">Wrote ESP32-S3 (XIAO Sense) firmware for Yoda, an AI desk robot: OV2640 camera, 16 kHz I2S PDM mic, MAX98357A speaker, PSRAM buffering and FreeRTOS stream buffers. JPEG frames stream over HTTPS and mic audio over WebSockets.</li>
+            <li data-lens="edge ai">Built Yoda's on-prem backend on an NVIDIA DGX Spark (ARM64) with no cloud dependency. An asyncio FastAPI server takes HTTPS frames into a drop-oldest queue and holds an authenticated WebSocket for commands and 16 kHz audio.</li>
+            <li data-lens="edge ai">A PyTorch-free ONNX Runtime vision chain (RTMO-s pose → YuNet → SFace → FER+, ~110 MB of models) runs at <span class="mono">60–70 ms/frame</span>, 5 FPS with 0 dropped frames, with keypoint-based wave detection and open-set face ID.</li>
+            <li data-lens="edge ai">A bilingual “Hey Yoda” voice loop chains Silero VAD, int8 faster-whisper (<span class="mono">1.4 s</span>), Qwen3-VL-8B on the live frame and Piper TTS. A Pydantic allow-list decides which LLM commands reach the hardware. 167 pytest tests.</li>
+            <li data-lens="ai">Built a hybrid OKF + RAG chatbot that answers Bihar MSME policy questions with citations. A Google Open Knowledge Format graph (249 concepts, 311 edges) answers exact-fact queries in <span class="mono">0.02–0.13 s</span> vs 20–110 s on the LLM path. Open questions go through BGE-M3 dense + sparse retrieval in Qdrant, rank fusion and a bge-reranker-v2-m3 cross-encoder, and a coverage check declines low-evidence answers. FastAPI + React, 109 figures checked against the source PDFs, 51 tests.</li>
+            <li data-lens="edge">Ran the same assistant fully locally on a CPU-only machine and benchmarked gemma3:4b (~10 tok/s) against llama3.2:1b (~21 tok/s). The knowledge-graph tier answers in 0.02–0.13 s with no LLM at all.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="role-row">
+        <div class="when">Aug 2026 – Present<br>Patna</div>
+        <div>
+          <h3>Undergraduate Research Intern</h3>
+          <p class="sub">Nanopore Biosensor Signal Processing · under Dr. Naren Das, Dept. of ECE, BIT Mesra</p>
+          <ul class="bullets">
+            <li data-lens="edge ai">Built a 17-module Python pipeline (NumPy, SciPy, scikit-learn) for nanopore current traces: rolling-median baseline, noise estimation, threshold + hysteresis event detection, AdaBoost event fitting, and PSD noise spectroscopy + PLS.</li>
+            <li data-lens="edge ai">Curated a 440-recording (3.1 GB) dataset. The event classifier reached <span class="mono">0.84</span> balanced accuracy on an independent test day vs 0.55 for a cross-session baseline. Event fitting was validated on 3,150 synthetic events (92–100% shape accuracy at ≥4× rise time).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Selected work</div><h2>Projects, with their numbers</h2></div>
+        <p>Each figure lists the conditions it was measured under. Simulation results say so.</p>
+      </div>
+
+      <div class="grid" id="cards">
+
+        <article class="card" data-lens="edge ai" data-order="1 1 3">
+          <div class="card-top">
+            <div><h3>Yoda AI DeskBot</h3><p class="ctx">NS Apps Innovation · 2026</p></div>
+            <span class="pins"><span class="pin edge">Edge</span><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="edge">ESP32-S3 Sense firmware streams camera frames and mic audio to an on-prem NVIDIA DGX Spark, which runs pose, face-ID and emotion models with no cloud dependency.</p>
+          <p class="desc" data-v="ai">An on-prem multimodal backend: a PyTorch-free ONNX vision chain plus a bilingual “Hey Yoda” voice loop where a VLM looks at the live frame, with an allow-list between the LLM and the hardware.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Vision latency</td><td>60–70 ms</td><td>Per frame, RTMO-s → YuNet → SFace → FER+</td></tr>
+              <tr><td>Throughput</td><td>5 FPS</td><td>0 dropped frames, drop-oldest queue</td></tr>
+              <tr><td>Speech-to-text</td><td>1.4 s</td><td>faster-whisper small, int8, English</td></tr>
+              <tr><td>Tests</td><td>167</td><td>pytest</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>ESP32-S3</span><span>FreeRTOS</span><span>I2S</span><span>FastAPI</span><span>WebSocket</span><span>ONNX Runtime</span><span>Qwen3-VL</span><span>Piper TTS</span></div>
+          <div class="card-foot"><span class="status">Company project · code not public</span></div>
+        </article>
+
+        <article class="card" data-lens="edge ai" data-order="2 5 1">
+          <div class="card-top">
+            <div><h3>MSME Policy Assistant</h3><p class="ctx">NS Apps Innovation · 2026 · OKF knowledge graph + RAG</p></div>
+            <span class="pins"><span class="pin edge">Edge</span><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="ai">Answers Bihar MSME policy questions with citations. Exact facts come from a knowledge graph in milliseconds; open questions go through hybrid dense + sparse retrieval, rank fusion and a cross-encoder reranker, and a coverage check declines to answer when the evidence is thin.</p>
+          <p class="desc" data-v="edge">A fully local RAG assistant on a CPU-only machine: BGE-M3 embeddings, Qdrant and Ollama, with a knowledge-graph tier that answers exact facts without running an LLM at all.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Exact-fact answer</td><td>0.02–0.13 s</td><td>Knowledge-graph tier, vs 20–110 s on the LLM path</td></tr>
+              <tr><td>Knowledge graph</td><td>249 / 311</td><td>Concepts / edges, Google OKF v0.2</td></tr>
+              <tr><td>Local LLM speed</td><td>~10 vs ~21 tok/s</td><td>gemma3:4b vs llama3.2:1b, CPU only</td></tr>
+              <tr><td>Verified figures</td><td>109</td><td>Checked against source PDFs · 51 tests</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>BGE-M3</span><span>Qdrant</span><span>bge-reranker-v2-m3</span><span>Ollama</span><span>FastAPI</span><span>React</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/MSME_BOT" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+
+        <article class="card" data-lens="ai" data-order="3 9 2">
+          <div class="card-top">
+            <div><h3>Amazon ML Challenge 2026</h3><p class="ctx">Business entity resolution · team lead, gemma_gals</p></div>
+            <span class="pins"><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="ai">Led a 3-member team matching 1.7M businesses against ~10M noisy records. Multi-key blocking and a two-stage LightGBM cascade (73 features) shrink the candidate set, and a fine-tuned multilingual mmBERT-small (140M) cross-encoder re-scores the uncertain pairs.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Final score</td><td>F0.5 0.968</td><td>Public leaderboard, ~90,000 registrants</td></tr>
+              <tr><td>Candidates / entity</td><td>~300 → 5.8</td><td>At 0.979 recall</td></tr>
+              <tr><td>Pair AUC</td><td>0.955</td><td>Cross-encoder, vs 0.931 for LightGBM</td></tr>
+              <tr><td>Compute</td><td>12 threads</td><td>Laptop, plus Kaggle GPUs for fine-tuning</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>Python</span><span>LightGBM</span><span>PyTorch</span><span>Transformers</span><span>Polars</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/amazon-ml-challenge-gemma-gals" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+
+        <article class="card" data-lens="edge ai" data-order="4 4 4">
+          <div class="card-top">
+            <div><h3>Nanopore Signal Pipeline</h3><p class="ctx">Research · BIT Mesra · 2026 – present</p></div>
+            <span class="pins"><span class="pin edge">Edge</span><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="edge">Signal processing for nanopore current traces: rolling-median baseline, noise estimation, threshold + hysteresis event detection, AdaBoost event fitting, and PSD noise spectroscopy with PLS.</p>
+          <p class="desc" data-v="ai">A 17-module Python pipeline that turns raw nanopore current traces into detected, fitted and classified events, tested on a held-out day of recordings rather than a random split.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Balanced accuracy</td><td>0.84</td><td>Independent test day, vs 0.55 cross-session baseline</td></tr>
+              <tr><td>Shape accuracy</td><td>92–100%</td><td>3,150 synthetic events, ≥4× rise time</td></tr>
+              <tr><td>Dataset</td><td>440 recordings</td><td>3.1 GB, curated</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>NumPy</span><span>SciPy</span><span>scikit-learn</span><span>PSD</span><span>PLS</span><span>pytest</span></div>
+          <div class="card-foot"><span class="status">Lab research · ongoing</span></div>
+        </article>
+
+        <article class="card" data-lens="edge" data-order="5 2 9">
+          <div class="card-top">
+            <div><h3>ADAS for a Mini Autonomous Vehicle</h3><p class="ctx">Mechatronics project</p></div>
+            <span class="pins"><span class="pin edge">Edge</span></span>
+          </div>
+          <p class="desc" data-v="edge">YOLOv8n runs through TensorFlow Lite on a Raspberry Pi for real-time obstacle detection, with frame skipping and reduced input sizes to keep inference on-board. Detections drive an ESP32 motor controller over UART, which runs DC motors through an H-bridge.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Detector</td><td>YOLOv8n</td><td>TensorFlow Lite, uint8 input, Raspberry Pi</td></tr>
+              <tr><td>Input size</td><td>160 / 256 px</td><td>With frame skipping</td></tr>
+              <tr><td>Control link</td><td>UART 115200</td><td>Pi → ESP32 → H-bridge → DC motors</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>YOLOv8n</span><span>TensorFlow Lite</span><span>OpenCV</span><span>Raspberry Pi</span><span>ESP32</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/MechatronicsVehicle" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+
+        <article class="card" data-lens="edge" data-order="6 3 9">
+          <div class="card-top">
+            <div><h3>ML-Based MPPT Controller</h3><p class="ctx">Grid-tied solar inverter · 2026</p></div>
+            <span class="pins"><span class="pin edge">Edge</span></span>
+          </div>
+          <p class="desc" data-v="edge">Gaussian-process Bayesian optimization paired with a small MLP sized for an embedded control loop. The MLP decides when a global-peak search is needed, which matters under partial shading.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Tracking efficiency</td><td>99.37%</td><td>Mean over 10 irradiance, temperature and shading scenarios, digital-twin simulation, vs 96.89% P&amp;O</td></tr>
+              <tr><td>Peak-search trigger</td><td>98.6%</td><td>Test accuracy, 31k samples</td></tr>
+              <tr><td>Model size</td><td>~770 weights</td><td>9-24-16-5 MLP</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>Python</span><span>NumPy</span><span>SciPy</span><span>MATLAB</span><span>Bayesian optimization</span></div>
+          <div class="card-foot"><span class="status">Simulation study</span></div>
+        </article>
+
+        <article class="card" data-lens="ai" data-order="7 9 5">
+          <div class="card-top">
+            <div><h3>MindCheck</h3><p class="ctx">Adaptive mental-health screening · 2026</p></div>
+            <span class="pins"><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="ai">The FastAPI + Next.js platform behind a patent application: IRT-based adaptive screening for engineering students that picks each next question from the answers so far.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Question bank</td><td>314 items</td><td>Capped at 30 questions per session</td></tr>
+              <tr><td>Backend tests</td><td>92</td><td>FastAPI service</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>FastAPI</span><span>Next.js</span><span>NumPy</span><span>SQLAlchemy</span><span>IRT</span></div>
+          <div class="card-foot"><span class="status">Patent applied · code not public</span></div>
+        </article>
+
+        <article class="card" data-lens="ai" data-order="8 9 6">
+          <div class="card-top">
+            <div><h3>Twigg</h3><p class="ctx">LLM copilot browser extension</p></div>
+            <span class="pins"><span class="pin ai">AI-ML</span></span>
+          </div>
+          <p class="desc" data-v="ai">A job-hunt copilot for Chrome, Brave and Edge: form autofill, application tracking, resume tailoring and outreach drafts on the Gemini API or a local Ollama model. It never submits anything for you, and a guardrail rejects any rewrite that adds a number or a tool you didn't list.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Codebase</td><td>~5,900 lines</td><td>JavaScript, Manifest V3</td></tr>
+              <tr><td>LLM backends</td><td>2</td><td>Gemini API or local Ollama</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>JavaScript</span><span>Manifest V3</span><span>JSON-LD</span><span>Gemini API</span><span>Ollama</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/Twigg" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="repos">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Also on GitHub</div><h2>Smaller builds and study repos</h2></div>
+      </div>
+      <ul class="repos">
+        <li data-lens="ai"><a href="https://github.com/Swizknife/YOUTUBE_VDO_SUMMARIZER_BASIC-RAG-BASED-SYSTEM" target="_blank" rel="noopener">YouTube summarizer ↗</a><span>Summarizes YouTube videos with a basic RAG pipeline.</span></li>
+        <li data-lens="ai"><a href="https://github.com/Swizknife/Building-end-to-end-AI-Agent-in-LangChain-" target="_blank" rel="noopener">End-to-end AI agent ↗</a><span>An AI agent built in LangChain, with a companion tool-calling repo.</span></li>
+        <li data-lens="ai"><a href="https://github.com/Swizknife/AUTO-EIT-Automated-scoring-system-for-elicited-imitation-task-responses-" target="_blank" rel="noopener">AUTO-EIT ↗</a><span>Scores sentence transcriptions by meaning, using SBERT embeddings and an attention network.</span></li>
+        <li data-lens="edge ai"><a href="https://github.com/Swizknife/car_detector" target="_blank" rel="noopener">car_detector ↗</a><span>YOLO-based car detection and counting in video.</span></li>
+        <li data-lens="ai"><a href="https://github.com/Swizknife/RECOMMENDER-BASED-ON-COLLABORATIVE-FILTERING" target="_blank" rel="noopener">Collaborative-filtering recommender ↗</a><span>A movie recommender in NumPy and TensorFlow.</span></li>
+        <li data-lens="ai"><a href="https://github.com/Swizknife/deep-learning-basics" target="_blank" rel="noopener">Deep-learning fundamentals ↗</a><span>Neural-network fundamentals in Jupyter notebooks.</span></li>
+      </ul>
+      <a class="btn all-repos" href="https://github.com/Swizknife?tab=repositories" target="_blank" rel="noopener">See all repositories on GitHub ↗</a>
+    </div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">Skills</div><h2>Toolkit</h2></div>
+        <p>The track switch at the top dims the skills that don't apply.</p>
+      </div>
+      <div class="skills">
+        <div><h3>Languages</h3><div class="chips">
+          <span class="skill" data-lens="edge ai">Python</span><span class="skill" data-lens="edge ai">C/C++</span><span class="skill" data-lens="edge ai">TypeScript</span><span class="skill" data-lens="ai">JavaScript</span><span class="skill" data-lens="ai">SQL</span><span class="skill" data-lens="edge">MATLAB</span>
+        </div></div>
+        <div><h3>Embedded</h3><div class="chips">
+          <span class="skill" data-lens="edge">ESP32-S3 (Arduino-ESP32)</span><span class="skill" data-lens="edge">FreeRTOS</span><span class="skill" data-lens="edge">I2S</span><span class="skill" data-lens="edge">UART</span><span class="skill" data-lens="edge">PSRAM</span><span class="skill" data-lens="edge">Raspberry Pi</span>
+        </div></div>
+        <div><h3>Edge inference</h3><div class="chips">
+          <span class="skill" data-lens="edge">TensorFlow Lite</span><span class="skill" data-lens="edge ai">ONNX Runtime</span><span class="skill" data-lens="edge">YOLOv8</span><span class="skill" data-lens="edge ai">OpenCV</span><span class="skill" data-lens="edge">int8 faster-whisper</span><span class="skill" data-lens="edge">Silero VAD</span>
+        </div></div>
+        <div><h3>ML / DL</h3><div class="chips">
+          <span class="skill" data-lens="edge ai">PyTorch</span><span class="skill" data-lens="ai">Hugging Face Transformers</span><span class="skill" data-lens="edge ai">scikit-learn</span><span class="skill" data-lens="edge ai">LightGBM</span><span class="skill" data-lens="ai">Pandas</span><span class="skill" data-lens="ai">Polars</span>
+        </div></div>
+        <div><h3>LLM / GenAI</h3><div class="chips">
+          <span class="skill" data-lens="ai">RAG</span><span class="skill" data-lens="ai">OKF knowledge graphs</span><span class="skill" data-lens="ai">Qdrant</span><span class="skill" data-lens="ai">Embeddings</span><span class="skill" data-lens="ai">Rerankers</span><span class="skill" data-lens="edge ai">Ollama</span><span class="skill" data-lens="ai">Whisper</span><span class="skill" data-lens="ai">VLMs</span>
+        </div></div>
+        <div><h3>Signal processing &amp; backend</h3><div class="chips">
+          <span class="skill" data-lens="edge ai">NumPy</span><span class="skill" data-lens="edge ai">SciPy</span><span class="skill" data-lens="edge">PSD / noise analysis</span><span class="skill" data-lens="ai">FastAPI</span><span class="skill" data-lens="edge ai">WebSockets</span><span class="skill" data-lens="ai">React</span><span class="skill" data-lens="edge ai">Git</span><span class="skill" data-lens="edge ai">Linux</span>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="more">
+    <div class="wrap two">
+      <div>
+        <div class="label">Applied patent &amp; publication</div>
+        <ul class="facts" style="margin-top:14px">
+          <li><b>Hybrid Psychometric–Machine Learning Platform for Multi-Modal Mental Health Screening of Engineering Students</b><span class="meta">IRT-based adaptive mental-health screening · Kishore, Sharma, Roy</span></li>
+        </ul>
+        <div class="label" style="margin-top:36px">Education</div>
+        <ul class="facts" style="margin-top:14px">
+          <li><b>Birla Institute of Technology, Mesra (Patna Campus)</b><span class="meta">B.Tech, Electronics &amp; Communication Engineering · CGPA 7.2/10 · 2024 – May 2028</span></li>
+          <li><b>Children College, Azamgarh</b><span class="meta">Class XII (ISC) 93% · Class X (CISCE) 92.4%</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="label">Achievements</div>
+        <ul class="facts" style="margin-top:14px">
+          <li><b>Finalist, TantraFiesta 2025</b><span class="meta">IIIT Nagpur</span></li>
+          <li><b>Finalist, Coinbase-sponsored Web3 Hackathon</b><span class="meta">Innovate-a-thon 2025, BIT Mesra</span></li>
+          <li><b>Cleared Round 1, Adobe University Hackathon 2026</b></li>
+          <li><b>Basketball gold medalist</b><span class="meta">2× winner at inter-branch and inter-college level</span></li>
+          <li><b>Chess gold medal</b><span class="meta">Inter-branch championship</span></li>
+        </ul>
+        <div class="label" style="margin-top:36px">Leadership</div>
+        <ul class="facts" style="margin-top:14px">
+          <li><b>Head of Publicity, TECHNIKA 26-27</b><span class="meta">Flash-mob, social-media and banner campaigns for ~2,000 participants</span></li>
+          <li><b>Workshops</b><span class="meta">Tutored ~300 students in ML workshops; ran a hands-on Arduino workshop for ~150</span></li>
+          <li><b>Ignite Designing &amp; Drafting Team</b><span class="meta">Brochures, ID cards, posts and publicity for events and guests</span></li>
+          <li><b>Pratibimb Society</b><span class="meta">Guitarist, led stage shows, 1st prize in band competition</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div>
+      <div class="label">Contact</div>
+      <h2>Looking for AI-ML and Edge AI internships</h2>
+      <p>Email <span class="mono">btech15109.24@bitmesra.ac.in</span>, or reach me on <a href="https://www.linkedin.com/in/soumyasharma427" target="_blank" rel="noopener">LinkedIn</a> and <a href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
+    <div class="foot-note">SS-28 · Rev. Oct 2026<br>Every number above lists the conditions it came from.</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var LENSES = ["all", "edge", "ai"];
+  var IDX = { all: 0, edge: 1, ai: 2 };
+  var buttons = document.querySelectorAll(".lens button");
+
+  function apply(lens) {
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.set === lens)); });
+    document.querySelectorAll("[data-lens]").forEach(function (el) {
+      var match = lens === "all" || el.dataset.lens.split(" ").indexOf(lens) !== -1;
+      if (el.classList.contains("skill")) el.classList.toggle("dim", !match);
+      else el.hidden = !match;
+    });
+    document.querySelectorAll(".card").forEach(function (card) {
+      var orders = card.dataset.order.split(" ");
+      card.style.order = orders[IDX[lens]];
+      var variants = card.querySelectorAll("[data-v]");
+      var want = lens === "all" ? "ai" : lens;
+      if (!card.querySelector('[data-v="' + want + '"]')) want = variants[0].dataset.v;
+      variants.forEach(function (v) { v.hidden = v.dataset.v !== want; });
+    });
+  }
+
+  function fromHash() {
+    var h = (location.hash || "").slice(1);
+    return LENSES.indexOf(h) !== -1 ? h : "all";
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var lens = b.dataset.set;
+      apply(lens);
+      try { history.replaceState(null, "", lens === "all" ? location.pathname + location.search : "#" + lens); } catch (e) {}
+    });
+  });
+  window.addEventListener("hashchange", function () {
+    var h = (location.hash || "").slice(1);
+    if (LENSES.indexOf(h) !== -1) apply(h);
+  });
+  apply(fromHash());
+
+  var copyBtn = document.getElementById("copy-email");
+  var emailEl = document.getElementById("email-text");
+  copyBtn.addEventListener("click", function () {
+    var text = emailEl.textContent;
+    function selectIt() {
+      var r = document.createRange(); r.selectNodeContents(emailEl);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      copyBtn.textContent = "Selected · press Ctrl+C";
+    }
+    try {
+      navigator.clipboard.writeText(text).then(function () { copyBtn.textContent = "Copied"; }, selectIt);
+    } catch (e) { selectIt(); }
+    setTimeout(function () { copyBtn.textContent = "Copy email"; }, 2400);
+  });
+
+  var canvas = document.getElementById("traces");
+  var hero = canvas.parentElement;
+  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+  function draw() {
+    var w = hero.clientWidth, h = hero.clientHeight;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + "px"; canvas.style.height = h + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var cs = getComputedStyle(document.documentElement);
+    var trace = cs.getPropertyValue("--trace").trim();
+    var pad = cs.getPropertyValue("--pad").trim();
+    var g = 16, R = rng(2028), n = Math.min(70, Math.round((w * h) / 9000));
+    ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for (var i = 0; i < n; i++) {
+      var x = Math.floor(R() * (w / g)) * g, y = Math.floor(R() * (h / g)) * g;
+      var l1 = (2 + Math.floor(R() * 8)) * g, d = (1 + Math.floor(R() * 3)) * g * (R() < 0.5 ? -1 : 1);
+      var l2 = (2 + Math.floor(R() * 10)) * g, ad = Math.abs(d);
+      ctx.strokeStyle = trace;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l1, y); ctx.lineTo(x + l1 + ad, y + d); ctx.lineTo(x + l1 + ad + l2, y + d); ctx.stroke();
+      ctx.strokeStyle = pad; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = pad; ctx.fillRect(x + l1 + ad + l2 - 4, y + d - 4, 8, 8);
+      ctx.lineWidth = 2;
+    }
+  }
+  draw();
+  if (window.ResizeObserver) new ResizeObserver(draw).observe(hero);
+  try { window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", draw); } catch (e) {}
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
