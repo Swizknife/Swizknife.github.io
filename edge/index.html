@@ -4,234 +4,212 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Soumya Sharma · Edge AI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Soumya Sharma: Edge AI and embedded systems. ESP32-S3 firmware, on-prem CPU inference, TinyML-sized control models and signal processing.">
+<meta name="description" content="Soumya Sharma: Edge AI and embedded systems. ESP32-S3 firmware, on-prem CPU inference, control-loop ML and signal processing.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@600;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a component datasheet. Part-number bar, hero with key specifications, a featured block diagram, then project cards that each carry a Parameter / Value / Conditions table. */
+/* Layout: warm paper, navy ink, one Naruto-orange accent. Painted original landscapes sit behind the hero, About and footer; the datasheet tables and the Yoda diagram carry the work. Single light look by design. */
 :root {
-  --bg: #0e1714;
-  --surface: #13201b;
-  --line: #24372f;
-  --fg: #e3ebe6;
-  --muted: #93a69c;
-  --accent: #e29b5b;
-  --trace: #1b2c25;
-  --pad: #2a3f36;
-  --header: rgb(14 23 20 / 0.86);
-  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  --f-body: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-  color-scheme: dark;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
-    --accent: #a2541a; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
-    color-scheme: light;
-  }
-}
-:root[data-theme="light"] {
-  --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
-  --accent: #a2541a; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
+  --paper: #fbf8f3;
+  --surface: #ffffff;
+  --sunk: #f4efe6;
+  --line: #e6dfd3;
+  --ink: #1c2340;
+  --muted: #5d6275;
+  --orange: #e8771e;
+  --orange-ink: #a14b0a;
+  --f-display: "Schibsted Grotesk", "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Instrument Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
   color-scheme: light;
 }
-
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 72px; }
-body {
-  margin: 0; background: var(--bg); color: var(--fg);
-  font-family: var(--f-body); font-size: 16px; line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
-}
-body::before {
-  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
-  z-index: 30; background: var(--bg);
-}
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--paper); }
 a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
-a:hover { color: var(--accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-h1, h2, h3 { text-wrap: balance; margin: 0; }
+a:hover { color: var(--orange-ink); }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3, h4 { text-wrap: balance; margin: 0; }
 p { margin: 0; }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-code { font-family: var(--f-mono); font-size: 0.86em; }
+ul { margin: 0; padding: 0; list-style: none; }
+code, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+code { font-size: 0.86em; }
 
-.wrap {
-  max-width: 1120px; margin-inline: auto;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
-.label { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.wrap { max-width: 1120px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.label { display: inline-flex; align-items: center; gap: 8px; font: 500 0.72rem var(--f-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+.spiral { width: 16px; height: 16px; flex: none; color: var(--orange); }
+.scene { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block; }
 
-.bar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
-  background: var(--header); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line);
-}
-.bar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
-.mark {
-  display: inline-grid; place-items: center; width: 34px; height: 34px; flex: none;
-  border: 1.5px solid var(--fg); border-radius: 3px;
-  font-family: var(--f-display); font-weight: 700; font-size: 0.95rem; text-decoration: none;
-}
-.partno { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
-.partno b { font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
-.partno span { font-family: var(--f-mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
-.bar nav { display: flex; gap: 18px; margin-left: auto; font-size: 0.9rem; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgb(251 248 243 / 0.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 12px; padding-block: 12px; }
+.bar .name { font-family: var(--f-display); font-weight: 700; font-size: 1.02rem; text-decoration: none; }
+.bar .tag { font: 0.74rem var(--f-mono); color: var(--muted); }
+.bar nav { display: flex; gap: 18px; margin-left: auto; font-size: 0.92rem; }
 .bar nav a { text-decoration: none; color: var(--muted); }
-.bar nav a:hover { color: var(--fg); }
+.bar nav a:hover { color: var(--ink); }
 
+/* Hero */
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
-#traces {
-  position: absolute; inset: 0; pointer-events: none;
-  -webkit-mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
-  mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
-}
-.hero .wrap {
-  position: relative; display: grid; gap: 40px;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  padding-block: 64px 56px; align-items: start;
-}
-.hero h1 {
-  font-family: var(--f-display); font-weight: 700;
-  font-size: clamp(2.9rem, 7.4vw, 5.4rem); line-height: 0.92; letter-spacing: -0.015em; margin-top: 14px;
-}
-.role { margin-top: 18px; font-size: 1.2rem; font-weight: 500; }
-.role span { color: var(--accent); }
+.hero .scene { -webkit-mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.35) 0%, #000 60%); mask-image: linear-gradient(100deg, rgb(0 0 0 / 0.35) 0%, #000 60%); }
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 44px; padding-block: 56px 64px; align-items: start; }
+.portrait { position: relative; width: 156px; height: 156px; margin-bottom: 22px; }
+.portrait .halo { position: absolute; inset: -26px; width: calc(100% + 52px); height: calc(100% + 52px); color: var(--orange); opacity: 0.28; }
+.portrait img { position: relative; display: block; width: 156px; height: 156px; object-fit: cover; object-position: 50% 22%; border-radius: 50%; border: 3px solid var(--orange); padding: 4px; background: var(--surface); max-width: 100%; }
+.hero h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.7rem, 6.6vw, 4.6rem); line-height: 0.95; letter-spacing: -0.03em; margin-top: 10px; }
+.role { margin-top: 16px; font-size: 1.2rem; font-weight: 600; color: var(--orange-ink); }
 .school { margin-top: 4px; color: var(--muted); font-size: 0.95rem; }
-.pitch { margin-top: 20px; max-width: 56ch; font-size: 1.05rem; }
-.links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px;
-  border: 1px solid var(--line); border-radius: 4px; background: var(--surface);
-  text-decoration: none; font: 500 0.9rem var(--f-body); color: var(--fg); cursor: pointer;
-}
-.btn:hover { border-color: var(--muted); color: var(--fg); }
-.btn.solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-.btn.solid:hover { color: var(--bg); opacity: 0.9; }
+.pitch { margin-top: 18px; max-width: 54ch; font-size: 1.05rem; }
+.links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); text-decoration: none; font: 600 0.9rem var(--f-body); color: var(--ink); cursor: pointer; }
+.btn:hover { border-color: var(--orange); color: var(--ink); }
+.btn.solid { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.btn.solid:hover { color: var(--paper); opacity: 0.92; }
 .email { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
 .email code { color: var(--muted); user-select: all; overflow-wrap: anywhere; }
-.copy { font: 500 0.78rem var(--f-mono); padding: 5px 9px; }
-
-.specs { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px 18px 8px; min-width: 0; }
-.specs-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
-.specs-head h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.1rem; }
+.copy { font: 500 0.76rem var(--f-mono); padding: 5px 11px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 20px 10px; min-width: 0; box-shadow: 0 1px 0 var(--line); }
+.panel h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.15rem; }
 
 .tw { overflow-x: auto; }
-table.st { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-.st th {
-  text-align: left; font: 500 0.66rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line);
-}
-.st td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.st { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin-top: 8px; }
+.st th { text-align: left; font: 500 0.66rem var(--f-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); }
+.st td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 .st tr:last-child td { border-bottom: 0; }
-.st td:nth-child(2) { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; color: var(--accent); }
-.st td:nth-child(3) { color: var(--muted); font-size: 0.8rem; }
-.specs .st td:nth-child(2) { font-size: 0.95rem; }
+.st td:nth-child(2) { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 500; color: var(--orange-ink); white-space: nowrap; }
+.st td:nth-child(3) { color: var(--muted); font-size: 0.82rem; }
 
-section.block { padding-block: 72px 8px; }
-.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
-.sec-head h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.7rem, 3.6vw, 2.3rem); margin-top: 6px; }
+/* Sections */
+section.block { position: relative; padding-block: 68px 8px; }
+.sec-head { position: relative; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.sec-head::after { content: ""; position: absolute; left: 0; bottom: -2px; width: 72px; height: 3px; border-radius: 2px; background: var(--orange); }
+.sec-head::before { content: ""; position: absolute; left: 72px; bottom: -4px; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+.sec-head h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.7rem, 3.6vw, 2.3rem); letter-spacing: -0.02em; margin-top: 6px; }
 .sec-head p { color: var(--muted); max-width: 54ch; font-size: 0.95rem; }
 
-.pill {
-  display: inline-flex; align-items: center; gap: 7px; font: 500 0.72rem var(--f-mono);
-  letter-spacing: 0.04em; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
-  white-space: nowrap;
-}
-.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
-.pill.plan::before { background: transparent; border: 1.5px solid var(--muted); }
+/* About */
+#about { overflow: hidden; padding-bottom: 64px; border-bottom: 1px solid var(--line); }
+#about .wrap { position: relative; }
+.about-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 36px; }
+.bio p { font-size: 1.04rem; max-width: 60ch; }
+.bio p + p { margin-top: 12px; }
+.interests { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; }
+.interests span { font-size: 0.88rem; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.hobbies { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.hobby { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.hobby h3 { font-family: var(--f-display); font-weight: 700; font-size: 1.02rem; }
+.hobby p { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+.lessons-head { margin-top: 44px; margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.lessons-head h3 { font-family: var(--f-display); font-weight: 700; font-size: 1.3rem; }
+.lessons-head p { color: var(--muted); font-size: 0.92rem; }
+.lessons { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.lesson { background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--orange); border-radius: 8px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.lesson svg { width: 28px; height: 28px; color: var(--orange-ink); }
+.lesson h4 { font-family: var(--f-display); font-weight: 700; font-size: 1rem; }
+.lesson p { font-size: 0.86rem; color: var(--muted); }
+.lesson p b { color: var(--ink); font-weight: 600; }
 
 /* Featured Yoda */
-.feature { display: grid; gap: 28px; }
+.feature { display: grid; gap: 26px; }
 .feature-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px 24px; }
-.feature-top h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.feature-top h3 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.35rem, 3vw, 1.7rem); }
 .feature-top .ctx { color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
-figure.dia { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; font: 500 0.72rem var(--f-mono); padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); white-space: nowrap; }
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+.pill.plan::before { background: transparent; border: 1.5px solid var(--muted); }
+figure.dia { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
 .dia-scroll { overflow-x: auto; }
-.dia svg { display: block; width: 100%; min-width: 640px; height: auto; color: var(--fg); }
+.dia svg { display: block; width: 100%; min-width: 640px; height: auto; color: var(--ink); }
 .dia svg .muted { fill: var(--muted); }
-.dia svg .acc { fill: var(--accent); }
-.dia svg .box { fill: var(--bg); stroke: var(--line); }
+.dia svg .acc { fill: var(--orange-ink); }
+.dia svg .box { fill: var(--paper); stroke: var(--line); }
 .dia svg .outer { fill: none; stroke: var(--muted); }
 figcaption { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
 .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+.sub-label { margin-bottom: 10px; }
 .decisions { display: grid; gap: 14px; }
 .decisions li { padding-top: 14px; border-top: 1px solid var(--line); }
 .decisions b { display: block; font-weight: 600; }
 .decisions span { color: var(--muted); font-size: 0.92rem; }
 
-/* Cards */
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-.card {
-  display: flex; flex-direction: column; gap: 14px; min-width: 0;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px;
-}
+.card { display: flex; flex-direction: column; gap: 14px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; }
 .card-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
-.card h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.32rem; line-height: 1.15; }
-.ctx { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+.card h3 { font-family: var(--f-display); font-weight: 700; font-size: 1.28rem; line-height: 1.2; letter-spacing: -0.01em; }
+.ctx { font-size: 0.86rem; color: var(--muted); margin-top: 4px; }
 .card p.desc { font-size: 0.95rem; }
 .stack { display: flex; flex-wrap: wrap; gap: 6px; }
-.stack span { font: 0.72rem var(--f-mono); color: var(--muted); padding: 3px 7px; border: 1px solid var(--line); border-radius: 3px; }
-.card-foot { margin-top: auto; padding-top: 4px; font-size: 0.86rem; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.card-foot a { font-weight: 500; }
+.stack span { font: 0.72rem var(--f-mono); color: var(--muted); padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--paper); }
+.card-foot { margin-top: auto; padding-top: 4px; font-size: 0.88rem; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card-foot a { font-weight: 600; }
 .card-foot .status { color: var(--muted); font-family: var(--f-mono); font-size: 0.75rem; padding-top: 2px; }
 .card.wide { grid-column: 1 / -1; }
 .card.planned { background: transparent; border-style: dashed; }
 
-.role-row { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 8px 32px; padding-block: 22px; border-top: 1px solid var(--line); }
-.role-row:last-child { border-bottom: 1px solid var(--line); }
-.when { font-family: var(--f-mono); font-size: 0.82rem; color: var(--muted); padding-top: 4px; }
-.role-row h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.3rem; }
+.role-row { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 8px 32px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.when { font: 0.82rem var(--f-mono); color: var(--muted); padding-top: 4px; }
+.role-row h3 { font-family: var(--f-display); font-weight: 700; font-size: 1.22rem; }
 .role-row .sub { color: var(--muted); font-size: 0.93rem; margin-top: 2px; }
 .role-row p.sum { margin-top: 10px; max-width: 74ch; }
 
-.skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 32px; }
-.skills h3 { font: 500 0.72rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px 30px; }
+.skills h3 { font: 500 0.72rem var(--f-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chips span { font-size: 0.86rem; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); }
+.chips span { font-size: 0.86rem; padding: 4px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
 
 .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
 .facts { display: grid; gap: 12px; margin-top: 14px; }
 .facts li { padding-top: 12px; border-top: 1px solid var(--line); }
 .facts li b { font-weight: 600; }
-.facts .meta { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+.facts .m { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
 .gap-top { margin-top: 36px; }
 
-footer { margin-top: 88px; border-top: 1px solid var(--line); }
-footer .wrap { padding-block: 40px 56px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
-footer h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+footer { position: relative; overflow: hidden; margin-top: 84px; border-top: 1px solid var(--line); }
+footer .wrap { position: relative; padding-block: 56px 72px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+footer h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(1.6rem, 3.4vw, 2.2rem); letter-spacing: -0.02em; }
 footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
-.foot-note { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); text-align: right; display: grid; gap: 8px; justify-items: end; }
+.foot-note { font: 0.76rem var(--f-mono); color: var(--muted); display: grid; gap: 8px; justify-items: end; text-align: right; }
+.foot-note a { color: var(--orange-ink); font-weight: 500; }
 
-@media (max-width: 940px) {
-  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 44px 40px; }
-  .grid, .two, .split { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 960px) {
+  .lessons { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .hero .wrap, .about-grid, .grid, .two, .split { grid-template-columns: minmax(0, 1fr); }
+  .hero .wrap { padding-block: 40px 44px; }
   .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bar nav { display: none; }
 }
-@media (max-width: 620px) {
-  .role-row { grid-template-columns: minmax(0, 1fr); }
-  .skills { grid-template-columns: minmax(0, 1fr); }
-  .partno span { white-space: normal; }
-  footer .wrap { grid-template-columns: minmax(0, 1fr); }
-  .foot-note { text-align: left; justify-items: start; }
+@media (max-width: 600px) {
+  .lessons, .hobbies { grid-template-columns: minmax(0, 1fr); }
+  .role-row, .skills { grid-template-columns: minmax(0, 1fr); }
+  .bar .tag { display: none; }
   .card { padding: 18px; }
+  footer .wrap { grid-template-columns: minmax(0, 1fr); }
+  .foot-note { justify-items: start; text-align: left; }
   .st td:nth-child(2) { white-space: normal; }
+  .portrait, .portrait img { width: 128px; height: 128px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="spiral" viewBox="5 5 14 14"><path d="M12 12 a1 1 0 0 1 2 0 a2 2 0 0 1 -4 0 a3 3 0 0 1 6 0 a4 4 0 0 1 -8 0 a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
 <header class="bar">
   <div class="wrap">
-    <a class="mark" href="#top" aria-label="Back to top">SS</a>
-    <div class="partno"><b>Soumya Sharma</b><span>SS-28 · Edge AI &amp; Embedded · Rev. Oct 2026</span></div>
+    <svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>
+    <a class="name" href="#top">Soumya Sharma</a>
+    <span class="tag">Edge AI &amp; Embedded</span>
     <nav aria-label="Sections">
+      <a href="#about">About</a>
       <a href="#yoda">Yoda</a>
       <a href="#work">Projects</a>
       <a href="#skills">Skills</a>
@@ -242,12 +220,16 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 
 <main id="top">
   <div class="hero">
-    <canvas id="traces" aria-hidden="true"></canvas>
+    <canvas class="scene" data-scene="village" aria-hidden="true"></canvas>
     <div class="wrap">
       <div>
-        <div class="label">Datasheet · B.Tech ECE · Class of 2028</div>
-        <h1>Soumya<br>Sharma</h1>
-        <p class="role"><span>Edge AI</span> &amp; Embedded Systems</p>
+        <div class="portrait">
+          <svg class="halo" aria-hidden="true"><use href="#spiral"/></svg>
+          <img src="portrait.jpg" alt="Soumya Sharma" width="156" height="156">
+        </div>
+        <div class="label">B.Tech ECE · Class of 2028</div>
+        <h1>Soumya Sharma</h1>
+        <p class="role">Edge AI &amp; Embedded Systems</p>
         <p class="school">Electronics &amp; Communication Engineering, BIT Mesra (Patna Campus)</p>
         <p class="pitch">I write the firmware and the inference stack it talks to: an ESP32-S3 that streams camera and microphone over Wi-Fi without dropping samples, a DGX Spark that runs vision and speech on CPU with no cloud, and models small enough to sit inside a control loop.</p>
         <div class="links">
@@ -263,8 +245,8 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
         </div>
       </div>
 
-      <div class="specs">
-        <div class="specs-head"><h2>Key specifications</h2><span class="label">With conditions</span></div>
+      <div class="panel">
+        <h2>Key specifications</h2>
         <div class="tw">
           <table class="st">
             <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
@@ -283,10 +265,66 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
     </div>
   </div>
 
+  <section class="block" id="about">
+    <canvas class="scene" data-scene="forest" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>About me</div><h2>Hardware first, then the model</h2></div>
+      </div>
+      <div class="about-grid">
+        <div class="bio">
+          <p>I'm an Electronics &amp; Communication undergraduate at BIT Mesra, Patna, graduating in 2028. I like the point where hardware meets machine learning: getting a camera and a microphone onto Wi-Fi without losing a sample, and getting a model small or fast enough to live next to them.</p>
+          <p>Most of my projects end the same way, with a measured number and the conditions it was measured under.</p>
+          <div class="interests" aria-label="Interests">
+            <span>Embedded firmware</span><span>On-device inference</span><span>Sensor signal processing</span><span>TinyML</span><span>Control-loop ML</span>
+          </div>
+        </div>
+        <div class="hobbies">
+          <div class="hobby"><h3>Basketball &amp; chess</h3><p>Basketball gold, 2× at inter-branch and inter-college level. Chess gold, inter-branch.</p></div>
+          <div class="hobby"><h3>Guitar &amp; band</h3><p>Guitarist with Pratibimb Society. Our band took 1st prize in the band competition.</p></div>
+          <div class="hobby"><h3>Design &amp; teaching</h3><p>Brochures and publicity for Ignite and TECHNIKA. Ran an Arduino workshop for ~150 students and ML workshops for ~300.</p></div>
+          <div class="hobby"><h3>Anime</h3><p>A long-time Naruto fan. The orange on this site and the landscapes behind it are a nod to the series.</p></div>
+        </div>
+      </div>
+
+      <div class="lessons-head">
+        <h3>Lessons from the Leaf</h3>
+        <p>Five characters from Naruto, and what I took from each.</p>
+      </div>
+      <div class="lessons">
+        <div class="lesson">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 L4 14 H11 L9 22 L20 9 H13 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <h4>Kakashi</h4>
+          <p><b>Look underneath the underneath.</b> Every number on my resume has a source I can open.</p>
+        </div>
+        <div class="lesson">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="17" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 12 H13 M3 11 L1 10 M21 11 L23 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <h4>Obito</h4>
+          <p><b>Nobody gets left behind.</b> I write tests, docs and handoff notes so a teammate can pick up my work.</p>
+        </div>
+        <div class="lesson">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 3 C11 4 5 10 5 19 C13 19 19 12 20 3 Z M5 19 L3 21 M6 18 L14 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h4>Sasuke</h4>
+          <p><b>Train until it's second nature.</b> I rebuild fundamentals from scratch.</p>
+        </div>
+        <div class="lesson">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 C16 8 16 15 12 20 C8 15 8 8 12 3 Z M12 20 C7 19 4 15 3 11 C7 11 10 14 12 20 M12 20 C17 19 20 15 21 11 C17 11 14 14 12 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          <h4>Hinata</h4>
+          <p><b>Quiet persistence.</b> Steady effort beats a loud start.</p>
+        </div>
+        <div class="lesson">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="12" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 10 H12 M6 13 H12 M6 16 H10 M21 3 L14 13 M14 13 L13 15.5 L15.5 14.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h4>Jiraiya</h4>
+          <p><b>Teach what you learn.</b> ~300 students in ML workshops and ~150 in an Arduino workshop.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="yoda">
     <div class="wrap feature">
       <div class="sec-head" style="margin-bottom:0">
-        <div><div class="label">Featured build</div><h2>Yoda DeskBot</h2></div>
+        <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Featured build</div><h2>Yoda DeskBot</h2></div>
         <p>Firmware for a XIAO ESP32-S3 Sense that streams to an NVIDIA DGX Spark, and the on-prem inference that answers it. Built at NS Apps Innovation, Sep–Nov 2026.</p>
       </div>
 
@@ -305,62 +343,54 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
               <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
               <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="acc"/></marker>
             </defs>
-
-            <rect x="10" y="20" width="320" height="360" rx="6" class="outer" stroke-width="1.5"/>
-            <text x="26" y="48" font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="17" fill="currentColor">XIAO ESP32-S3 Sense</text>
-
-            <rect x="26" y="66" width="288" height="96" rx="4" class="box" stroke-width="1"/>
-            <text x="40" y="88" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">CORE 0 · audioTask</text>
-            <text x="40" y="112" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">PDM mic, 16 kHz → DC-block + gain</text>
-            <text x="40" y="134" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">→ 2 s stream buffer in PSRAM</text>
-            <text x="40" y="152" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">full? drop new audio, never block</text>
-
+            <g font-family="Instrument Sans, Segoe UI, sans-serif">
+            <rect x="10" y="20" width="320" height="360" rx="8" class="outer" stroke-width="1.5"/>
+            <text x="26" y="48" font-family="Schibsted Grotesk, Arial, sans-serif" font-weight="700" font-size="17" fill="currentColor">XIAO ESP32-S3 Sense</text>
+            <rect x="26" y="66" width="288" height="96" rx="6" class="box" stroke-width="1"/>
+            <text x="40" y="88" font-family="JetBrains Mono, monospace" font-size="11" class="muted">CORE 0 · audioTask</text>
+            <text x="40" y="112" font-size="13" fill="currentColor">PDM mic, 16 kHz → DC-block + gain</text>
+            <text x="40" y="134" font-size="13" fill="currentColor">→ 2 s stream buffer in PSRAM</text>
+            <text x="40" y="152" font-family="JetBrains Mono, monospace" font-size="11" class="muted">full? drop new audio, never block</text>
             <line x1="170" y1="162" x2="170" y2="194" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar)"/>
-            <text x="180" y="183" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">100 ms frames</text>
+            <text x="180" y="183" font-family="JetBrains Mono, monospace" font-size="11" class="muted">100 ms frames</text>
+            <rect x="26" y="196" width="288" height="168" rx="6" class="box" stroke-width="1"/>
+            <text x="40" y="218" font-family="JetBrains Mono, monospace" font-size="11" class="muted">CORE 1 · loop()</text>
+            <text x="40" y="242" font-size="13" fill="currentColor">OV2640 hardware JPEG, 2 buffers</text>
+            <text x="40" y="264" font-size="13" fill="currentColor">sendFrame(): zero-copy POST</text>
+            <text x="40" y="286" font-size="13" fill="currentColor">drainAudio(): buffer → WebSocket</text>
+            <text x="40" y="308" font-size="13" fill="currentColor">commands → allow-list → eyes</text>
+            <text x="40" y="332" font-family="JetBrains Mono, monospace" font-size="11" class="muted">backoff 0.5 → 8 s on failed uploads</text>
+            <text x="40" y="350" font-family="JetBrains Mono, monospace" font-size="11" class="muted">heartbeat 15 s · reconnect 5 s</text>
 
-            <rect x="26" y="196" width="288" height="168" rx="4" class="box" stroke-width="1"/>
-            <text x="40" y="218" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">CORE 1 · loop()</text>
-            <text x="40" y="242" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">OV2640 hardware JPEG, 2 buffers</text>
-            <text x="40" y="264" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">sendFrame(): zero-copy POST</text>
-            <text x="40" y="286" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">drainAudio(): buffer → WebSocket</text>
-            <text x="40" y="308" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">commands → allow-list → eyes</text>
-            <text x="40" y="332" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">backoff 0.5 → 8 s on failed uploads</text>
-            <text x="40" y="350" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">heartbeat 15 s · reconnect 5 s</text>
-
-            <rect x="630" y="20" width="320" height="360" rx="6" class="outer" stroke-width="1.5"/>
-            <text x="646" y="48" font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="17" fill="currentColor">DGX Spark · FastAPI</text>
-
-            <rect x="646" y="66" width="288" height="86" rx="4" class="box" stroke-width="1"/>
-            <text x="660" y="88" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">VISION · CPU</text>
-            <text x="660" y="112" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">drop-oldest queue (size 2)</text>
-            <text x="660" y="134" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">RTMO-s → YuNet → SFace → FER+</text>
-
-            <rect x="646" y="166" width="288" height="86" rx="4" class="box" stroke-width="1"/>
-            <text x="660" y="188" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">VOICE · CPU</text>
-            <text x="660" y="212" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">Silero VAD → faster-whisper int8</text>
-            <text x="660" y="234" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">"Hey Yoda" → Qwen3-VL-8B</text>
-
-            <rect x="646" y="266" width="288" height="98" rx="4" class="box" stroke-width="1"/>
-            <text x="660" y="288" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">BEHAVIOUR</text>
-            <text x="660" y="312" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">rules + cooldowns → commands</text>
-            <text x="660" y="334" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">SAY · SET_EXPRESSION · LOOK_*</text>
-            <text x="660" y="352" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">queued commands expire after 30 s</text>
+            <rect x="630" y="20" width="320" height="360" rx="8" class="outer" stroke-width="1.5"/>
+            <text x="646" y="48" font-family="Schibsted Grotesk, Arial, sans-serif" font-weight="700" font-size="17" fill="currentColor">DGX Spark · FastAPI</text>
+            <rect x="646" y="66" width="288" height="86" rx="6" class="box" stroke-width="1"/>
+            <text x="660" y="88" font-family="JetBrains Mono, monospace" font-size="11" class="muted">VISION · CPU</text>
+            <text x="660" y="112" font-size="13" fill="currentColor">drop-oldest queue (size 2)</text>
+            <text x="660" y="134" font-size="13" fill="currentColor">RTMO-s → YuNet → SFace → FER+</text>
+            <rect x="646" y="166" width="288" height="86" rx="6" class="box" stroke-width="1"/>
+            <text x="660" y="188" font-family="JetBrains Mono, monospace" font-size="11" class="muted">VOICE · CPU</text>
+            <text x="660" y="212" font-size="13" fill="currentColor">Silero VAD → faster-whisper int8</text>
+            <text x="660" y="234" font-size="13" fill="currentColor">"Hey Yoda" → Qwen3-VL-8B</text>
+            <rect x="646" y="266" width="288" height="98" rx="6" class="box" stroke-width="1"/>
+            <text x="660" y="288" font-family="JetBrains Mono, monospace" font-size="11" class="muted">BEHAVIOUR</text>
+            <text x="660" y="312" font-size="13" fill="currentColor">rules + cooldowns → commands</text>
+            <text x="660" y="334" font-size="13" fill="currentColor">SAY · SET_EXPRESSION · LOOK_*</text>
+            <text x="660" y="352" font-family="JetBrains Mono, monospace" font-size="11" class="muted">queued commands expire after 30 s</text>
 
             <line x1="330" y1="104" x2="628" y2="104" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
-            <text x="479" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">HTTP(S) POST /api/v1/frame</text>
-            <text x="479" y="122" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">raw JPEG · 202, never waits for AI</text>
-
-            <line x1="330" y1="200" x2="628" y2="200" class="acc" stroke="currentColor" style="stroke: var(--accent)" stroke-width="2.4" marker-end="url(#ara)"/>
-            <text x="479" y="190" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" class="acc">WebSocket · binary audio</text>
-            <text x="479" y="218" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">16 kHz PCM · 100 ms = 3,200 B</text>
-
-            <line x1="628" y1="262" x2="332" y2="262" style="stroke: var(--accent)" stroke-width="2.4" marker-end="url(#ara)"/>
-            <text x="479" y="252" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" class="acc">same WebSocket · JSON commands</text>
-            <text x="479" y="280" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">one TLS session carries both</text>
-
+            <text x="479" y="94" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">HTTP(S) POST /api/v1/frame</text>
+            <text x="479" y="122" text-anchor="middle" font-size="12" class="muted">raw JPEG · 202, never waits for AI</text>
+            <line x1="330" y1="200" x2="628" y2="200" style="stroke: var(--orange-ink)" stroke-width="2.4" marker-end="url(#ara)"/>
+            <text x="479" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" class="acc">WebSocket · binary audio</text>
+            <text x="479" y="218" text-anchor="middle" font-size="12" class="muted">16 kHz PCM · 100 ms = 3,200 B</text>
+            <line x1="628" y1="262" x2="332" y2="262" style="stroke: var(--orange-ink)" stroke-width="2.4" marker-end="url(#ara)"/>
+            <text x="479" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" class="acc">same WebSocket · JSON commands</text>
+            <text x="479" y="280" text-anchor="middle" font-size="12" class="muted">one TLS session carries both</text>
             <line x1="330" y1="336" x2="628" y2="336" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 5" marker-end="url(#ar)"/>
-            <text x="479" y="326" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">GET /commands/next</text>
-            <text x="479" y="354" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">polling, only while the socket is down</text>
+            <text x="479" y="326" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="currentColor">GET /commands/next</text>
+            <text x="479" y="354" text-anchor="middle" font-size="12" class="muted">polling, only while the socket is down</text>
+            </g>
           </svg>
         </div>
         <figcaption>Frames go out over HTTP(S) and never wait for inference. Audio and commands share one WebSocket, so the ESP32 only ever holds two TLS sessions. Polling takes over only while that socket is down, so no command is handled twice.</figcaption>
@@ -368,7 +398,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 
       <div class="split">
         <div>
-          <div class="label" style="margin-bottom:10px">Firmware parameters</div>
+          <div class="label sub-label">Firmware parameters</div>
           <div class="tw"><table class="st">
             <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
             <tbody>
@@ -383,7 +413,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
           </table></div>
         </div>
         <div>
-          <div class="label" style="margin-bottom:10px">Design decisions</div>
+          <div class="label sub-label">Design decisions</div>
           <ul class="decisions">
             <li><b>The mic gets its own core.</b><span>A camera upload can block <code>loop()</code> for 100 ms or more. The audio task on core 0 keeps filling the PSRAM buffer meanwhile, so no samples are lost.</span></li>
             <li><b>Drop new audio rather than block the mic.</b><span>If the socket falls behind and the 2 s buffer fills, new frames are counted and dropped. The buffer is flushed on reconnect so stale speech is never replayed.</span></li>
@@ -395,9 +425,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
       </div>
 
       <article class="card wide">
-        <div class="card-top">
-          <div><h3>On-prem inference on the DGX Spark</h3><p class="ctx">ARM64 · Grace CPU · no cloud calls</p></div>
-        </div>
+        <div class="card-top"><div><h3>On-prem inference on the DGX Spark</h3><p class="ctx">ARM64 · Grace CPU · no cloud calls</p></div></div>
         <p class="desc">Vision runs as a PyTorch-free ONNX Runtime chain. Speech runs on the CPU as well, because the faster-whisper pip build has no GPU support on ARM64, so I benchmarked model sizes on the target and kept the small int8 model. Face ID is open-set: below the match threshold a person stays UNKNOWN.</p>
         <div class="split">
           <div class="tw"><table class="st">
@@ -426,7 +454,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
   <section class="block" id="work">
     <div class="wrap">
       <div class="sec-head">
-        <div><div class="label">More builds</div><h2>On-device and close to the signal</h2></div>
+        <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>More builds</div><h2>On-device and close to the signal</h2></div>
         <p>Each figure lists the conditions it came from. Simulation results say so.</p>
       </div>
       <div class="grid">
@@ -505,7 +533,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 
   <section class="block" id="experience">
     <div class="wrap">
-      <div class="sec-head"><div><div class="label">Experience</div><h2>Internship and research</h2></div></div>
+      <div class="sec-head"><div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Experience</div><h2>Internship and research</h2></div></div>
       <div class="role-row">
         <div class="when">Sep 2026 – Nov 2026<br>India</div>
         <div>
@@ -527,7 +555,7 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 
   <section class="block" id="skills">
     <div class="wrap">
-      <div class="sec-head"><div><div class="label">Skills</div><h2>Toolkit</h2></div></div>
+      <div class="sec-head"><div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Skills</div><h2>Toolkit</h2></div></div>
       <div class="skills">
         <div><h3>Languages</h3><div class="chips"><span>C/C++</span><span>Python</span><span>MATLAB</span></div></div>
         <div><h3>Embedded</h3><div class="chips"><span>ESP32-S3 (Arduino-ESP32)</span><span>FreeRTOS</span><span>I2S / PDM</span><span>UART</span><span>PSRAM</span><span>WebSockets</span><span>TLS</span><span>Raspberry Pi</span></div></div>
@@ -542,22 +570,21 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
       <div>
         <div class="label">Education</div>
         <ul class="facts">
-          <li><b>Birla Institute of Technology, Mesra (Patna Campus)</b><span class="meta">B.Tech, Electronics &amp; Communication Engineering · CGPA 7.2/10 · 2024 – May 2028</span></li>
-          <li><b>Children College, Azamgarh</b><span class="meta">Class XII (ISC) 93% · Class X (CISCE) 92.4%</span></li>
+          <li><b>Birla Institute of Technology, Mesra (Patna Campus)</b><span class="m">B.Tech, Electronics &amp; Communication Engineering · CGPA 7.2/10 · 2024 – May 2028</span></li>
+          <li><b>Children College, Azamgarh</b><span class="m">Class XII (ISC) 93% · Class X (CISCE) 92.4%</span></li>
         </ul>
         <div class="label gap-top">Applied patent</div>
         <ul class="facts">
-          <li><b>Hybrid Psychometric–Machine Learning Platform for Multi-Modal Mental Health Screening of Engineering Students</b><span class="meta">IRT-based adaptive screening · Kishore, Sharma, Roy</span></li>
+          <li><b>Hybrid Psychometric–Machine Learning Platform for Multi-Modal Mental Health Screening of Engineering Students</b><span class="m">IRT-based adaptive screening · Kishore, Sharma, Roy</span></li>
         </ul>
       </div>
       <div>
         <div class="label">Achievements &amp; leadership</div>
         <ul class="facts">
-          <li><b>Finalist, TantraFiesta 2025</b><span class="meta">IIIT Nagpur</span></li>
-          <li><b>Finalist, Coinbase-sponsored Web3 Hackathon</b><span class="meta">Innovate-a-thon 2025, BIT Mesra · also cleared Round 1 of the Adobe University Hackathon 2026</span></li>
-          <li><b>Workshops</b><span class="meta">Ran a hands-on Arduino workshop for ~150 students; tutored ~300 in ML workshops</span></li>
-          <li><b>Head of Publicity, TECHNIKA 26-27</b><span class="meta">Campaigns for ~2,000 participants · Ignite Designing &amp; Drafting Team</span></li>
-          <li><b>Basketball and chess</b><span class="meta">Basketball gold, 2× inter-branch and inter-college · chess gold, inter-branch · guitarist, Pratibimb Society (1st prize, band competition)</span></li>
+          <li><b>Finalist, TantraFiesta 2025</b><span class="m">IIIT Nagpur</span></li>
+          <li><b>Finalist, Coinbase-sponsored Web3 Hackathon</b><span class="m">Innovate-a-thon 2025, BIT Mesra</span></li>
+          <li><b>Cleared Round 1, Adobe University Hackathon 2026</b></li>
+          <li><b>Head of Publicity, TECHNIKA 26-27</b><span class="m">Flash-mob, social-media and banner campaigns for ~2,000 participants</span></li>
         </ul>
       </div>
     </div>
@@ -565,15 +592,16 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 </main>
 
 <footer id="contact">
+  <canvas class="scene" data-scene="falls" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
-      <div class="label">Contact</div>
+      <div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Contact</div>
       <h2>Looking for Edge AI and embedded internships</h2>
       <p>Email <span class="mono">btech15109.24@bitmesra.ac.in</span>, or reach me on <a href="https://www.linkedin.com/in/soumyasharma427" target="_blank" rel="noopener">LinkedIn</a> and <a href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub</a>.</p>
     </div>
     <div class="foot-note">
-      <a href="../ai/" data-other-portfolio>AI-ML portfolio →</a>
-      <span>SS-28 · Rev. Oct 2026</span>
+      <a href="../ai/">AI-ML portfolio →</a>
+      <span>Landscapes are original illustrations.</span>
     </div>
   </div>
 </footer>
@@ -588,44 +616,112 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
       var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
       copyBtn.textContent = "Selected · press Ctrl+C";
     }
-    try {
-      navigator.clipboard.writeText(emailEl.textContent).then(function () { copyBtn.textContent = "Copied"; }, selectIt);
-    } catch (e) { selectIt(); }
+    try { navigator.clipboard.writeText(emailEl.textContent).then(function () { copyBtn.textContent = "Copied"; }, selectIt); } catch (e) { selectIt(); }
     setTimeout(function () { copyBtn.textContent = "Copy email"; }, 2400);
   });
-
-  var canvas = document.getElementById("traces");
-  var hero = canvas.parentElement;
+})();
+</script>
+<script>
+(function () {
   function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
-  function draw() {
-    var w = hero.clientWidth, h = hero.clientHeight;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + "px"; canvas.style.height = h + "px";
-    var ctx = canvas.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-    var cs = getComputedStyle(document.documentElement);
-    var trace = cs.getPropertyValue("--trace").trim();
-    var pad = cs.getPropertyValue("--pad").trim();
-    var g = 16, R = rng(2028), n = Math.min(70, Math.round((w * h) / 9000));
-    ctx.lineCap = "round"; ctx.lineJoin = "round";
-    for (var i = 0; i < n; i++) {
-      var x = Math.floor(R() * (w / g)) * g, y = Math.floor(R() * (h / g)) * g;
-      var l1 = (2 + Math.floor(R() * 8)) * g, d = (1 + Math.floor(R() * 3)) * g * (R() < 0.5 ? -1 : 1);
-      var l2 = (2 + Math.floor(R() * 10)) * g, ad = Math.abs(d);
-      ctx.lineWidth = 2; ctx.strokeStyle = trace;
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l1, y); ctx.lineTo(x + l1 + ad, y + d); ctx.lineTo(x + l1 + ad + l2, y + d); ctx.stroke();
-      ctx.lineWidth = 1.5; ctx.strokeStyle = pad;
-      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = pad; ctx.fillRect(x + l1 + ad + l2 - 4, y + d - 4, 8, 8);
+  function ink(a) { return "rgba(28,35,64," + a + ")"; }
+  function ridge(ctx, w, h, base, amp, step, R, color) {
+    ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, h);
+    var y = base;
+    for (var x = 0; x <= w + step; x += step) {
+      y += (R() - 0.5) * amp; y = Math.max(base - amp * 1.6, Math.min(base + amp * 0.6, y));
+      ctx.lineTo(x, y);
     }
+    ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
   }
-  draw();
-  if (window.ResizeObserver) new ResizeObserver(draw).observe(hero);
-  try { window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", draw); } catch (e) {}
-  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+  function house(ctx, x, base, bw, bh, color) {
+    var over = Math.max(6, bw * 0.12), peak = Math.max(10, bw * 0.22);
+    ctx.fillStyle = color;
+    ctx.fillRect(x, base - bh, bw, bh);
+    ctx.beginPath();
+    ctx.moveTo(x - over, base - bh);
+    ctx.quadraticCurveTo(x + bw * 0.2, base - bh - peak * 0.35, x + bw / 2, base - bh - peak);
+    ctx.quadraticCurveTo(x + bw * 0.8, base - bh - peak * 0.35, x + bw + over, base - bh);
+    ctx.closePath(); ctx.fill();
+  }
+  function tower(ctx, x, base, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, base - 46, 3, 46); ctx.fillRect(x + 21, base - 46, 3, 46);
+    ctx.fillRect(x - 2, base - 66, 28, 22);
+    ctx.beginPath(); ctx.ellipse(x + 12, base - 66, 14, 6, 0, Math.PI, 0); ctx.fill();
+  }
+  var scenes = {
+    village: function (ctx, w, h, R) {
+      var g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#fbf8f3"); g.addColorStop(0.55, "#fbf1e6"); g.addColorStop(1, "#f6dfc6");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      var sun = ctx.createRadialGradient(w * 0.7, h * 0.8, 0, w * 0.7, h * 0.8, h * 0.55);
+      sun.addColorStop(0, "rgba(232,119,30,0.22)"); sun.addColorStop(1, "rgba(232,119,30,0)");
+      ctx.fillStyle = sun; ctx.fillRect(0, 0, w, h);
+      ridge(ctx, w, h, h * 0.6, 26, 36, R, ink(0.045));
+      ctx.fillStyle = ink(0.075); ctx.beginPath();
+      ctx.moveTo(w * 0.5, h); ctx.lineTo(w * 0.55, h * 0.46);
+      var x = w * 0.55, y = h * 0.44;
+      while (x < w * 0.95) { x += 18 + R() * 30; y = h * (0.4 + R() * 0.06); ctx.lineTo(x, y); }
+      ctx.lineTo(w * 0.99, h); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = ink(0.05); ctx.lineWidth = 1.5;
+      for (var s = 0; s < 6; s++) { var sx = w * (0.58 + s * 0.065); ctx.beginPath(); ctx.moveTo(sx, h * 0.5); ctx.lineTo(sx + 6, h * 0.82); ctx.stroke(); }
+      var base1 = h * 0.86; x = -20;
+      while (x < w) { var bw = 40 + R() * 50; house(ctx, x, base1, bw, 26 + R() * 40, ink(0.07)); if (R() < 0.15) tower(ctx, x + bw + 10, base1, ink(0.07)); x += bw + 14 + R() * 18; }
+      x = -30;
+      while (x < w) { var fw = 60 + R() * 70; house(ctx, x, h + 2, fw, 36 + R() * 56, ink(0.11)); x += fw + 18 + R() * 26; }
+    },
+    forest: function (ctx, w, h, R) {
+      var g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#fbf8f3"); g.addColorStop(1, "#f3eee3");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      for (var r = 0; r < 4; r++) {
+        var rx = w * (0.15 + r * 0.24 + R() * 0.05);
+        ctx.fillStyle = "rgba(232,119,30,0.045)"; ctx.beginPath();
+        ctx.moveTo(rx, 0); ctx.lineTo(rx + 70, 0); ctx.lineTo(rx + 260, h); ctx.lineTo(rx + 120, h); ctx.closePath(); ctx.fill();
+      }
+      function trunk(x, tw, a) {
+        ctx.fillStyle = ink(a); ctx.beginPath();
+        ctx.moveTo(x, 0); ctx.lineTo(x + tw, 0); ctx.lineTo(x + tw * 1.25, h); ctx.lineTo(x - tw * 0.25, h); ctx.closePath(); ctx.fill();
+        for (var b = 0; b < 2; b++) { var by = h * (0.15 + R() * 0.5), dir = R() < 0.5 ? -1 : 1; ctx.beginPath(); ctx.moveTo(x + tw / 2, by); ctx.lineTo(x + tw / 2 + dir * tw * 1.6, by - tw * 0.9); ctx.lineTo(x + tw / 2 + dir * tw * 1.6, by - tw * 0.7); ctx.lineTo(x + tw / 2, by + 6); ctx.closePath(); ctx.fill(); }
+      }
+      var x = -10; while (x < w) { trunk(x, 12 + R() * 16, 0.04); x += 34 + R() * 40; }
+      x = 20; while (x < w) { trunk(x, 28 + R() * 28, 0.065); x += 150 + R() * 140; }
+      ctx.fillStyle = ink(0.04);
+      for (var c = 0; c < w / 40; c++) { ctx.beginPath(); ctx.arc(R() * w, R() * h * 0.08, 30 + R() * 50, 0, Math.PI * 2); ctx.fill(); }
+      ridge(ctx, w, h, h * 0.95, 10, 30, R, ink(0.05));
+    },
+    falls: function (ctx, w, h, R) {
+      var g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#fbf8f3"); g.addColorStop(1, "#edf1f5");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      var l = w * 0.56, r = w * 0.78;
+      ctx.strokeStyle = "rgba(96,128,170,0.16)";
+      for (var i = 0; i < 70; i++) { var sx = l + R() * (r - l); ctx.lineWidth = 1 + R() * 2.5; ctx.beginPath(); ctx.moveTo(sx, h * 0.12 + R() * 20); ctx.lineTo(sx + (R() - 0.5) * 6, h); ctx.stroke(); }
+      ctx.fillStyle = "rgba(96,128,170,0.08)"; ctx.fillRect(l, h * 0.12, r - l, h);
+      ctx.fillStyle = ink(0.085); ctx.beginPath(); ctx.moveTo(w * 0.4, h); ctx.lineTo(w * 0.42, h * 0.3);
+      var x = w * 0.42; while (x < l + 6) { x += 14 + R() * 18; ctx.lineTo(Math.min(x, l + 6), h * (0.06 + R() * 0.08)); }
+      ctx.lineTo(l + 4, h); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(r - 4, h); ctx.lineTo(r - 6, h * 0.1);
+      x = r - 6; while (x < w) { x += 14 + R() * 22; ctx.lineTo(x, h * (0.04 + R() * 0.1)); }
+      ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.75)";
+      for (var m = 0; m < 9; m++) { ctx.beginPath(); ctx.ellipse(l + R() * (r - l), h * (0.86 + R() * 0.1), 30 + R() * 40, 10 + R() * 8, 0, 0, Math.PI * 2); ctx.fill(); }
+    }
+  };
+  var seeds = { village: 4, forest: 11, falls: 27 };
+  function paint(c) {
+    var p = c.parentElement, w = p.clientWidth, h = p.clientHeight;
+    if (!w || !h) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+    var ctx = c.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    scenes[c.dataset.scene](ctx, w, h, rng(seeds[c.dataset.scene]));
+  }
+  var all = document.querySelectorAll("canvas[data-scene]");
+  all.forEach(paint);
+  if (window.ResizeObserver) all.forEach(function (c) { new ResizeObserver(function () { paint(c); }).observe(c.parentElement); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { all.forEach(paint); });
 })();
 </script>
 </body>
