@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soumya Sharma · Edge AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Soumya Sharma: Edge AI and embedded systems. ESP32-S3 firmware, on-prem CPU inference, TinyML-sized control models and signal processing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a component datasheet. Part-number bar, hero with key specifications, a featured block diagram, then project cards that each carry a Parameter / Value / Conditions table. */
+:root {
+  --bg: #0e1714;
+  --surface: #13201b;
+  --line: #24372f;
+  --fg: #e3ebe6;
+  --muted: #93a69c;
+  --accent: #e29b5b;
+  --trace: #1b2c25;
+  --pad: #2a3f36;
+  --header: rgb(14 23 20 / 0.86);
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
+    --accent: #a2541a; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f1; --surface: #ffffff; --line: #d6dcd3; --fg: #14201a; --muted: #56675e;
+  --accent: #a2541a; --trace: #e4e9e0; --pad: #cfd8cc; --header: rgb(245 246 241 / 0.88);
+  color-scheme: light;
+}
+
+[hidden] { display: none !important; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+code { font-family: var(--f-mono); font-size: 0.86em; }
+
+.wrap {
+  max-width: 1120px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.label { font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--header); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.bar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 10px; }
+.mark {
+  display: inline-grid; place-items: center; width: 34px; height: 34px; flex: none;
+  border: 1.5px solid var(--fg); border-radius: 3px;
+  font-family: var(--f-display); font-weight: 700; font-size: 0.95rem; text-decoration: none;
+}
+.partno { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.partno b { font-family: var(--f-display); font-weight: 600; font-size: 1rem; }
+.partno span { font-family: var(--f-mono); font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.bar nav { display: flex; gap: 18px; margin-left: auto; font-size: 0.9rem; }
+.bar nav a { text-decoration: none; color: var(--muted); }
+.bar nav a:hover { color: var(--fg); }
+
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+#traces {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
+  mask-image: linear-gradient(100deg, transparent 18%, #000 70%);
+}
+.hero .wrap {
+  position: relative; display: grid; gap: 40px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  padding-block: 64px 56px; align-items: start;
+}
+.hero h1 {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: clamp(2.9rem, 7.4vw, 5.4rem); line-height: 0.92; letter-spacing: -0.015em; margin-top: 14px;
+}
+.role { margin-top: 18px; font-size: 1.2rem; font-weight: 500; }
+.role span { color: var(--accent); }
+.school { margin-top: 4px; color: var(--muted); font-size: 0.95rem; }
+.pitch { margin-top: 20px; max-width: 56ch; font-size: 1.05rem; }
+.links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px;
+  border: 1px solid var(--line); border-radius: 4px; background: var(--surface);
+  text-decoration: none; font: 500 0.9rem var(--f-body); color: var(--fg); cursor: pointer;
+}
+.btn:hover { border-color: var(--muted); color: var(--fg); }
+.btn.solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn.solid:hover { color: var(--bg); opacity: 0.9; }
+.email { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.email code { color: var(--muted); user-select: all; overflow-wrap: anywhere; }
+.copy { font: 500 0.78rem var(--f-mono); padding: 5px 9px; }
+
+.specs { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px 18px 8px; min-width: 0; }
+.specs-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.specs-head h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.1rem; }
+
+.tw { overflow-x: auto; }
+table.st { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.st th {
+  text-align: left; font: 500 0.66rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line);
+}
+.st td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.st tr:last-child td { border-bottom: 0; }
+.st td:nth-child(2) { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; color: var(--accent); }
+.st td:nth-child(3) { color: var(--muted); font-size: 0.8rem; }
+.specs .st td:nth-child(2) { font-size: 0.95rem; }
+
+section.block { padding-block: 72px 8px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
+.sec-head h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.7rem, 3.6vw, 2.3rem); margin-top: 6px; }
+.sec-head p { color: var(--muted); max-width: 54ch; font-size: 0.95rem; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 7px; font: 500 0.72rem var(--f-mono);
+  letter-spacing: 0.04em; padding: 5px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted);
+  white-space: nowrap;
+}
+.pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.pill.plan::before { background: transparent; border: 1.5px solid var(--muted); }
+
+/* Featured Yoda */
+.feature { display: grid; gap: 28px; }
+.feature-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 12px 24px; }
+.feature-top h3 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.4rem, 3vw, 1.8rem); }
+.feature-top .ctx { color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
+figure.dia { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 18px; }
+.dia-scroll { overflow-x: auto; }
+.dia svg { display: block; width: 100%; min-width: 640px; height: auto; color: var(--fg); }
+.dia svg .muted { fill: var(--muted); }
+.dia svg .acc { fill: var(--accent); }
+.dia svg .box { fill: var(--bg); stroke: var(--line); }
+.dia svg .outer { fill: none; stroke: var(--muted); }
+figcaption { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+.decisions { display: grid; gap: 14px; }
+.decisions li { padding-top: 14px; border-top: 1px solid var(--line); }
+.decisions b { display: block; font-weight: 600; }
+.decisions span { color: var(--muted); font-size: 0.92rem; }
+
+/* Cards */
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.card {
+  display: flex; flex-direction: column; gap: 14px; min-width: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 22px;
+}
+.card-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.card h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.32rem; line-height: 1.15; }
+.ctx { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+.card p.desc { font-size: 0.95rem; }
+.stack { display: flex; flex-wrap: wrap; gap: 6px; }
+.stack span { font: 0.72rem var(--f-mono); color: var(--muted); padding: 3px 7px; border: 1px solid var(--line); border-radius: 3px; }
+.card-foot { margin-top: auto; padding-top: 4px; font-size: 0.86rem; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card-foot a { font-weight: 500; }
+.card-foot .status { color: var(--muted); font-family: var(--f-mono); font-size: 0.75rem; padding-top: 2px; }
+.card.wide { grid-column: 1 / -1; }
+.card.planned { background: transparent; border-style: dashed; }
+
+.role-row { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 8px 32px; padding-block: 22px; border-top: 1px solid var(--line); }
+.role-row:last-child { border-bottom: 1px solid var(--line); }
+.when { font-family: var(--f-mono); font-size: 0.82rem; color: var(--muted); padding-top: 4px; }
+.role-row h3 { font-family: var(--f-display); font-weight: 600; font-size: 1.3rem; }
+.role-row .sub { color: var(--muted); font-size: 0.93rem; margin-top: 2px; }
+.role-row p.sum { margin-top: 10px; max-width: 74ch; }
+
+.skills { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 32px; }
+.skills h3 { font: 500 0.72rem var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chips span { font-size: 0.86rem; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); }
+
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.facts { display: grid; gap: 12px; margin-top: 14px; }
+.facts li { padding-top: 12px; border-top: 1px solid var(--line); }
+.facts li b { font-weight: 600; }
+.facts .meta { display: block; color: var(--muted); font-size: 0.88rem; margin-top: 2px; }
+.gap-top { margin-top: 36px; }
+
+footer { margin-top: 88px; border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 40px 56px; display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+footer h2 { font-family: var(--f-display); font-weight: 600; font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
+.foot-note { font-family: var(--f-mono); font-size: 0.72rem; color: var(--muted); text-align: right; display: grid; gap: 8px; justify-items: end; }
+
+@media (max-width: 940px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); padding-block: 44px 40px; }
+  .grid, .two, .split { grid-template-columns: minmax(0, 1fr); }
+  .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bar nav { display: none; }
+}
+@media (max-width: 620px) {
+  .role-row { grid-template-columns: minmax(0, 1fr); }
+  .skills { grid-template-columns: minmax(0, 1fr); }
+  .partno span { white-space: normal; }
+  footer .wrap { grid-template-columns: minmax(0, 1fr); }
+  .foot-note { text-align: left; justify-items: start; }
+  .card { padding: 18px; }
+  .st td:nth-child(2) { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="Back to top">SS</a>
+    <div class="partno"><b>Soumya Sharma</b><span>SS-28 · Edge AI &amp; Embedded · Rev. Oct 2026</span></div>
+    <nav aria-label="Sections">
+      <a href="#yoda">Yoda</a>
+      <a href="#work">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <canvas id="traces" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div>
+        <div class="label">Datasheet · B.Tech ECE · Class of 2028</div>
+        <h1>Soumya<br>Sharma</h1>
+        <p class="role"><span>Edge AI</span> &amp; Embedded Systems</p>
+        <p class="school">Electronics &amp; Communication Engineering, BIT Mesra (Patna Campus)</p>
+        <p class="pitch">I write the firmware and the inference stack it talks to: an ESP32-S3 that streams camera and microphone over Wi-Fi without dropping samples, a DGX Spark that runs vision and speech on CPU with no cloud, and models small enough to sit inside a control loop.</p>
+        <div class="links">
+          <a class="btn solid" href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub ↗</a>
+          <a class="btn" href="https://www.linkedin.com/in/soumyasharma427" target="_blank" rel="noopener">LinkedIn ↗</a>
+<!--pages-only-->
+          <a class="btn" href="Soumya_Sharma_edge.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+<!--/pages-only-->
+        </div>
+        <div class="email">
+          <code id="email-text">btech15109.24@bitmesra.ac.in</code>
+          <button type="button" class="btn copy" id="copy-email">Copy email</button>
+        </div>
+      </div>
+
+      <div class="specs">
+        <div class="specs-head"><h2>Key specifications</h2><span class="label">With conditions</span></div>
+        <div class="tw">
+          <table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Mic buffer</td><td>2 s</td><td>64,000 B FreeRTOS stream buffer in PSRAM</td></tr>
+              <tr><td>Uplink</td><td>~90 KB/s</td><td>VGA JPEG at 2 FPS plus 16 kHz audio, design estimate</td></tr>
+              <tr><td>TLS sessions</td><td>2</td><td>~40–50 KB internal RAM each on the ESP32-S3</td></tr>
+              <tr><td>Vision inference</td><td>60–70 ms/frame</td><td>ONNX Runtime on the DGX CPU, 5 FPS, 0 dropped</td></tr>
+              <tr><td>MPPT tracking</td><td>99.37%</td><td>Digital-twin simulation, vs 96.89% P&amp;O</td></tr>
+              <tr><td>Control-loop MLP</td><td>~770 weights</td><td>9-24-16-5, 98.6% test accuracy</td></tr>
+              <tr><td>Local LLM</td><td>~21 tok/s</td><td>llama3.2:1b on a CPU-only machine</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" id="yoda">
+    <div class="wrap feature">
+      <div class="sec-head" style="margin-bottom:0">
+        <div><div class="label">Featured build</div><h2>Yoda DeskBot</h2></div>
+        <p>Firmware for a XIAO ESP32-S3 Sense that streams to an NVIDIA DGX Spark, and the on-prem inference that answers it. Built at NS Apps Innovation, Sep–Nov 2026.</p>
+      </div>
+
+      <div class="feature-top">
+        <div>
+          <h3>ESP32-S3 Sense ⇄ DGX Spark</h3>
+          <p class="ctx">The robot is a thin client. It captures and streams; the DGX sees, listens and decides.</p>
+        </div>
+        <span class="pill">Firmware running on the XIAO ESP32-S3 Sense</span>
+      </div>
+
+      <figure class="dia">
+        <div class="dia-scroll">
+          <svg viewBox="0 0 960 400" role="img" aria-label="The ESP32-S3 sends camera frames over HTTP and microphone audio over a WebSocket to the DGX; the DGX sends commands back on the same WebSocket, with HTTP polling as a fallback.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
+              <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="acc"/></marker>
+            </defs>
+
+            <rect x="10" y="20" width="320" height="360" rx="6" class="outer" stroke-width="1.5"/>
+            <text x="26" y="48" font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="17" fill="currentColor">XIAO ESP32-S3 Sense</text>
+
+            <rect x="26" y="66" width="288" height="96" rx="4" class="box" stroke-width="1"/>
+            <text x="40" y="88" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">CORE 0 · audioTask</text>
+            <text x="40" y="112" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">PDM mic, 16 kHz → DC-block + gain</text>
+            <text x="40" y="134" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">→ 2 s stream buffer in PSRAM</text>
+            <text x="40" y="152" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">full? drop new audio, never block</text>
+
+            <line x1="170" y1="162" x2="170" y2="194" stroke="currentColor" stroke-width="1.2" marker-end="url(#ar)"/>
+            <text x="180" y="183" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">100 ms frames</text>
+
+            <rect x="26" y="196" width="288" height="168" rx="4" class="box" stroke-width="1"/>
+            <text x="40" y="218" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">CORE 1 · loop()</text>
+            <text x="40" y="242" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">OV2640 hardware JPEG, 2 buffers</text>
+            <text x="40" y="264" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">sendFrame(): zero-copy POST</text>
+            <text x="40" y="286" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">drainAudio(): buffer → WebSocket</text>
+            <text x="40" y="308" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">commands → allow-list → eyes</text>
+            <text x="40" y="332" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">backoff 0.5 → 8 s on failed uploads</text>
+            <text x="40" y="350" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">heartbeat 15 s · reconnect 5 s</text>
+
+            <rect x="630" y="20" width="320" height="360" rx="6" class="outer" stroke-width="1.5"/>
+            <text x="646" y="48" font-family="IBM Plex Sans Condensed, Arial Narrow, sans-serif" font-weight="600" font-size="17" fill="currentColor">DGX Spark · FastAPI</text>
+
+            <rect x="646" y="66" width="288" height="86" rx="4" class="box" stroke-width="1"/>
+            <text x="660" y="88" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">VISION · CPU</text>
+            <text x="660" y="112" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">drop-oldest queue (size 2)</text>
+            <text x="660" y="134" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">RTMO-s → YuNet → SFace → FER+</text>
+
+            <rect x="646" y="166" width="288" height="86" rx="4" class="box" stroke-width="1"/>
+            <text x="660" y="188" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">VOICE · CPU</text>
+            <text x="660" y="212" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">Silero VAD → faster-whisper int8</text>
+            <text x="660" y="234" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">"Hey Yoda" → Qwen3-VL-8B</text>
+
+            <rect x="646" y="266" width="288" height="98" rx="4" class="box" stroke-width="1"/>
+            <text x="660" y="288" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">BEHAVIOUR</text>
+            <text x="660" y="312" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">rules + cooldowns → commands</text>
+            <text x="660" y="334" font-family="IBM Plex Sans, sans-serif" font-size="13" fill="currentColor">SAY · SET_EXPRESSION · LOOK_*</text>
+            <text x="660" y="352" font-family="IBM Plex Mono, monospace" font-size="11" class="muted">queued commands expire after 30 s</text>
+
+            <line x1="330" y1="104" x2="628" y2="104" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+            <text x="479" y="94" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">HTTP(S) POST /api/v1/frame</text>
+            <text x="479" y="122" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">raw JPEG · 202, never waits for AI</text>
+
+            <line x1="330" y1="200" x2="628" y2="200" class="acc" stroke="currentColor" style="stroke: var(--accent)" stroke-width="2.4" marker-end="url(#ara)"/>
+            <text x="479" y="190" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" class="acc">WebSocket · binary audio</text>
+            <text x="479" y="218" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">16 kHz PCM · 100 ms = 3,200 B</text>
+
+            <line x1="628" y1="262" x2="332" y2="262" style="stroke: var(--accent)" stroke-width="2.4" marker-end="url(#ara)"/>
+            <text x="479" y="252" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" class="acc">same WebSocket · JSON commands</text>
+            <text x="479" y="280" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">one TLS session carries both</text>
+
+            <line x1="330" y1="336" x2="628" y2="336" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 5" marker-end="url(#ar)"/>
+            <text x="479" y="326" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="currentColor">GET /commands/next</text>
+            <text x="479" y="354" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="12" class="muted">polling, only while the socket is down</text>
+          </svg>
+        </div>
+        <figcaption>Frames go out over HTTP(S) and never wait for inference. Audio and commands share one WebSocket, so the ESP32 only ever holds two TLS sessions. Polling takes over only while that socket is down, so no command is handled twice.</figcaption>
+      </figure>
+
+      <div class="split">
+        <div>
+          <div class="label" style="margin-bottom:10px">Firmware parameters</div>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Camera</td><td>640×480 JPEG</td><td>VGA, quality 12, encoded in the OV2640</td></tr>
+              <tr><td>Frame rate</td><td>2 FPS</td><td>Default 500 ms interval; 4 FPS for wave detection</td></tr>
+              <tr><td>Audio frames</td><td>100 ms / 3,200 B</td><td>16 kHz, 16-bit mono PCM</td></tr>
+              <tr><td>Audio buffer</td><td>2 s</td><td>FreeRTOS stream buffer in PSRAM</td></tr>
+              <tr><td>Uplink</td><td>~90 KB/s</td><td>Camera plus audio, design estimate</td></tr>
+              <tr><td>Upload backoff</td><td>0.5 → 8 s</td><td>Doubles per failure, capped at 16×</td></tr>
+              <tr><td>Heartbeat</td><td>15 s</td><td>Two missed pongs drop the socket; reconnect every 5 s</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div>
+          <div class="label" style="margin-bottom:10px">Design decisions</div>
+          <ul class="decisions">
+            <li><b>The mic gets its own core.</b><span>A camera upload can block <code>loop()</code> for 100 ms or more. The audio task on core 0 keeps filling the PSRAM buffer meanwhile, so no samples are lost.</span></li>
+            <li><b>Drop new audio rather than block the mic.</b><span>If the socket falls behind and the 2 s buffer fills, new frames are counted and dropped. The buffer is flushed on reconnect so stale speech is never replayed.</span></li>
+            <li><b>One socket for audio and commands.</b><span>Each TLS session costs ~40–50 KB of internal RAM, so audio rides the command WebSocket instead of opening a third connection.</span></li>
+            <li><b>The newest frame wins.</b><span><code>CAMERA_GRAB_LATEST</code> with two buffers on the ESP32 and a drop-oldest queue on the server mean nobody works on a stale image.</span></li>
+            <li><b>Two allow-lists.</b><span>The server only sends known commands, and the firmware ignores anything it doesn't recognise.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <article class="card wide">
+        <div class="card-top">
+          <div><h3>On-prem inference on the DGX Spark</h3><p class="ctx">ARM64 · Grace CPU · no cloud calls</p></div>
+        </div>
+        <p class="desc">Vision runs as a PyTorch-free ONNX Runtime chain. Speech runs on the CPU as well, because the faster-whisper pip build has no GPU support on ARM64, so I benchmarked model sizes on the target and kept the small int8 model. Face ID is open-set: below the match threshold a person stays UNKNOWN.</p>
+        <div class="split">
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Vision chain</td><td>60–70 ms/frame</td><td>RTMO-s → YuNet → SFace → FER+, 5 FPS, 0 dropped</td></tr>
+              <tr><td>Model weights</td><td>~110 MB</td><td>YuNet 0.2 + SFace 37 + RTMO-s 38 + FER+ 35 MB</td></tr>
+              <tr><td>Face match</td><td>cosine ≥ 0.363</td><td>Otherwise UNKNOWN</td></tr>
+            </tbody>
+          </table></div>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Speech model</th><th>Time</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>base</td><td>0.6 s</td><td>2.5 s of English speech, CPU</td></tr>
+              <tr><td>small, int8 (chosen)</td><td>1.4 s</td><td>Same clip</td></tr>
+              <tr><td>large-v3-turbo</td><td>3.7 s</td><td>Same clip</td></tr>
+            </tbody>
+          </table></div>
+        </div>
+        <div class="stack"><span>ESP32-S3</span><span>FreeRTOS</span><span>I2S PDM</span><span>PSRAM</span><span>WebSockets</span><span>TLS</span><span>FastAPI</span><span>ONNX Runtime</span><span>Silero VAD</span><span>faster-whisper</span></div>
+        <div class="card-foot"><span class="status">Company project · code not public · 167 backend tests</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><div class="label">More builds</div><h2>On-device and close to the signal</h2></div>
+        <p>Each figure lists the conditions it came from. Simulation results say so.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="card-top"><div><h3>ADAS for a Mini Autonomous Vehicle</h3><p class="ctx">Raspberry Pi + ESP32 · Mechatronics project</p></div></div>
+          <p class="desc">YOLOv8n runs through TensorFlow Lite on a Raspberry Pi for real-time obstacle detection. Frame skipping and reduced input sizes keep inference on-board. Detections drive an ESP32 motor controller over UART, which runs DC motors through an H-bridge.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Detector</td><td>YOLOv8n</td><td>TensorFlow Lite, uint8 input</td></tr>
+              <tr><td>Input size</td><td>160 / 256 px</td><td>With frame skipping</td></tr>
+              <tr><td>Control link</td><td>UART 115200</td><td>Pi → ESP32 → H-bridge → DC motors</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>YOLOv8n</span><span>TensorFlow Lite</span><span>OpenCV</span><span>Raspberry Pi</span><span>ESP32</span><span>UART</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/MechatronicsVehicle" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><div><h3>ML-Based MPPT Controller</h3><p class="ctx">Grid-tied solar inverter · 2026</p></div></div>
+          <p class="desc">Gaussian-process Bayesian optimization paired with an MLP small enough for an embedded control loop. The MLP decides when a global-peak search is worth running, which matters under partial shading.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Tracking efficiency</td><td>99.37%</td><td>Mean of 10 irradiance, temperature and shading scenarios, digital-twin simulation, vs 96.89% P&amp;O</td></tr>
+              <tr><td>Peak-search trigger</td><td>98.6%</td><td>Test accuracy, 31k samples</td></tr>
+              <tr><td>Model size</td><td>~770 weights</td><td>9-24-16-5 MLP</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>Python</span><span>NumPy</span><span>SciPy</span><span>MATLAB</span><span>Bayesian optimization</span></div>
+          <div class="card-foot"><span class="status">Simulation study</span></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><div><h3>Nanopore Signal Processing</h3><p class="ctx">Research under Dr. Naren Das · BIT Mesra · 2026 – present</p></div></div>
+          <p class="desc">A pipeline for raw nanopore current traces: rolling-median baseline, noise estimation, threshold + hysteresis event detection, AdaBoost event fitting, and PSD noise spectroscopy with PLS.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Shape accuracy</td><td>92–100%</td><td>3,150 synthetic events, ≥4× rise time</td></tr>
+              <tr><td>Event classifier</td><td>0.84</td><td>Balanced accuracy, independent test day, vs 0.55 baseline</td></tr>
+              <tr><td>Dataset</td><td>440 recordings</td><td>3.1 GB of real traces</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>NumPy</span><span>SciPy</span><span>PSD</span><span>PLS</span><span>AdaBoost</span></div>
+          <div class="card-foot"><span class="status">Lab research · ongoing</span></div>
+        </article>
+
+        <article class="card">
+          <div class="card-top"><div><h3>Local LLM on a CPU-only Box</h3><p class="ctx">NS Apps Innovation · MSME policy assistant</p></div></div>
+          <p class="desc">A fully local retrieval assistant with BGE-M3 embeddings, Qdrant and Ollama on a machine with no GPU. Exact facts come from a knowledge graph without running an LLM at all, which is what keeps it usable on CPU.</p>
+          <div class="tw"><table class="st">
+            <thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>Decode speed</td><td>~21 tok/s</td><td>llama3.2:1b, CPU only</td></tr>
+              <tr><td>Decode speed</td><td>~10 tok/s</td><td>gemma3:4b, CPU only</td></tr>
+              <tr><td>Exact-fact answer</td><td>0.02–0.13 s</td><td>Knowledge-graph tier, no LLM</td></tr>
+            </tbody>
+          </table></div>
+          <div class="stack"><span>Ollama</span><span>BGE-M3</span><span>Qdrant</span><span>FastAPI</span></div>
+          <div class="card-foot"><a href="https://github.com/Swizknife/MSME_BOT" target="_blank" rel="noopener">View code ↗</a></div>
+        </article>
+
+        <article class="card wide planned">
+          <div class="card-top">
+            <div><h3>Next on the bench: TinyML gate on the ESP32-S3</h3><p class="ctx">Planned · not built yet</p></div>
+            <span class="pill plan">Planned</span>
+          </div>
+          <p class="desc">Run an int8 person-detection model with TensorFlow Lite Micro on 96×96 grayscale frames on the XIAO itself, and send a frame to the DGX only when someone is in view. I will report inference time, tensor-arena size, model size and the share of uplink saved.</p>
+          <div class="stack"><span>ESP-IDF</span><span>TFLite Micro</span><span>int8</span></div>
+        </article>
+      </div>
+      <p class="ctx" style="margin-top:20px">Also on GitHub: <a href="https://github.com/Swizknife/car_detector" target="_blank" rel="noopener">car_detector ↗</a>, YOLO-based car detection and counting in video.</p>
+    </div>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div class="sec-head"><div><div class="label">Experience</div><h2>Internship and research</h2></div></div>
+      <div class="role-row">
+        <div class="when">Sep 2026 – Nov 2026<br>India</div>
+        <div>
+          <h3>NS Apps Innovation</h3>
+          <p class="sub">AI/ML &amp; React Developer Intern</p>
+          <p class="sum">Wrote and brought up the Yoda ESP32-S3 firmware, built the on-prem inference stack on the DGX Spark, and benchmarked local LLMs for a CPU-only retrieval assistant.</p>
+        </div>
+      </div>
+      <div class="role-row">
+        <div class="when">Aug 2026 – Present<br>Patna</div>
+        <div>
+          <h3>Undergraduate Research Intern</h3>
+          <p class="sub">Nanopore Biosensor Signal Processing · Dept. of ECE, BIT Mesra</p>
+          <p class="sum">Signal processing and event detection for nanopore current traces, validated on synthetic events and 440 real recordings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="wrap">
+      <div class="sec-head"><div><div class="label">Skills</div><h2>Toolkit</h2></div></div>
+      <div class="skills">
+        <div><h3>Languages</h3><div class="chips"><span>C/C++</span><span>Python</span><span>MATLAB</span></div></div>
+        <div><h3>Embedded</h3><div class="chips"><span>ESP32-S3 (Arduino-ESP32)</span><span>FreeRTOS</span><span>I2S / PDM</span><span>UART</span><span>PSRAM</span><span>WebSockets</span><span>TLS</span><span>Raspberry Pi</span></div></div>
+        <div><h3>Edge inference</h3><div class="chips"><span>TensorFlow Lite</span><span>ONNX Runtime</span><span>YOLOv8</span><span>OpenCV DNN</span><span>int8 faster-whisper</span><span>Silero VAD</span><span>Ollama</span></div></div>
+        <div><h3>Signal processing &amp; ML</h3><div class="chips"><span>NumPy</span><span>SciPy</span><span>PSD / noise analysis</span><span>scikit-learn</span><span>PyTorch</span><span>Bayesian optimization</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="more">
+    <div class="wrap two">
+      <div>
+        <div class="label">Education</div>
+        <ul class="facts">
+          <li><b>Birla Institute of Technology, Mesra (Patna Campus)</b><span class="meta">B.Tech, Electronics &amp; Communication Engineering · CGPA 7.2/10 · 2024 – May 2028</span></li>
+          <li><b>Children College, Azamgarh</b><span class="meta">Class XII (ISC) 93% · Class X (CISCE) 92.4%</span></li>
+        </ul>
+        <div class="label gap-top">Applied patent</div>
+        <ul class="facts">
+          <li><b>Hybrid Psychometric–Machine Learning Platform for Multi-Modal Mental Health Screening of Engineering Students</b><span class="meta">IRT-based adaptive screening · Kishore, Sharma, Roy</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="label">Achievements &amp; leadership</div>
+        <ul class="facts">
+          <li><b>Finalist, TantraFiesta 2025</b><span class="meta">IIIT Nagpur</span></li>
+          <li><b>Finalist, Coinbase-sponsored Web3 Hackathon</b><span class="meta">Innovate-a-thon 2025, BIT Mesra · also cleared Round 1 of the Adobe University Hackathon 2026</span></li>
+          <li><b>Workshops</b><span class="meta">Ran a hands-on Arduino workshop for ~150 students; tutored ~300 in ML workshops</span></li>
+          <li><b>Head of Publicity, TECHNIKA 26-27</b><span class="meta">Campaigns for ~2,000 participants · Ignite Designing &amp; Drafting Team</span></li>
+          <li><b>Basketball and chess</b><span class="meta">Basketball gold, 2× inter-branch and inter-college · chess gold, inter-branch · guitarist, Pratibimb Society (1st prize, band competition)</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact">
+  <div class="wrap">
+    <div>
+      <div class="label">Contact</div>
+      <h2>Looking for Edge AI and embedded internships</h2>
+      <p>Email <span class="mono">btech15109.24@bitmesra.ac.in</span>, or reach me on <a href="https://www.linkedin.com/in/soumyasharma427" target="_blank" rel="noopener">LinkedIn</a> and <a href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub</a>.</p>
+    </div>
+    <div class="foot-note">
+      <a href="../ai/" data-other-portfolio>AI-ML portfolio →</a>
+      <span>SS-28 · Rev. Oct 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var copyBtn = document.getElementById("copy-email");
+  var emailEl = document.getElementById("email-text");
+  copyBtn.addEventListener("click", function () {
+    function selectIt() {
+      var r = document.createRange(); r.selectNodeContents(emailEl);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      copyBtn.textContent = "Selected · press Ctrl+C";
+    }
+    try {
+      navigator.clipboard.writeText(emailEl.textContent).then(function () { copyBtn.textContent = "Copied"; }, selectIt);
+    } catch (e) { selectIt(); }
+    setTimeout(function () { copyBtn.textContent = "Copy email"; }, 2400);
+  });
+
+  var canvas = document.getElementById("traces");
+  var hero = canvas.parentElement;
+  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
+  function draw() {
+    var w = hero.clientWidth, h = hero.clientHeight;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + "px"; canvas.style.height = h + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var cs = getComputedStyle(document.documentElement);
+    var trace = cs.getPropertyValue("--trace").trim();
+    var pad = cs.getPropertyValue("--pad").trim();
+    var g = 16, R = rng(2028), n = Math.min(70, Math.round((w * h) / 9000));
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for (var i = 0; i < n; i++) {
+      var x = Math.floor(R() * (w / g)) * g, y = Math.floor(R() * (h / g)) * g;
+      var l1 = (2 + Math.floor(R() * 8)) * g, d = (1 + Math.floor(R() * 3)) * g * (R() < 0.5 ? -1 : 1);
+      var l2 = (2 + Math.floor(R() * 10)) * g, ad = Math.abs(d);
+      ctx.lineWidth = 2; ctx.strokeStyle = trace;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + l1, y); ctx.lineTo(x + l1 + ad, y + d); ctx.lineTo(x + l1 + ad + l2, y + d); ctx.stroke();
+      ctx.lineWidth = 1.5; ctx.strokeStyle = pad;
+      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = pad; ctx.fillRect(x + l1 + ad + l2 - 4, y + d - 4, 8, 8);
+    }
+  }
+  draw();
+  if (window.ResizeObserver) new ResizeObserver(draw).observe(hero);
+  try { window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", draw); } catch (e) {}
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
