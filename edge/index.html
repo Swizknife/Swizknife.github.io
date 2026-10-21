@@ -383,13 +383,13 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
       <header class="ch-head wrap">
         <div class="ch-kicker">Chapter 02</div>
         <h2 class="split">The Build</h2>
-        <p>Yoda DeskBot, and everything else I've built close to the signal.</p>
+        <p>Yoda DeskBot, a working AI desk robot, and everything else I've built close to the signal.</p>
       </header>
       <div class="wrap ch-body">
         <div class="slab feature">
       <div class="sec-head" style="margin-bottom:0">
         <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Featured build</div><h2>Yoda DeskBot</h2></div>
-        <p>Firmware for a XIAO ESP32-S3 Sense that streams to an NVIDIA DGX Spark, and the on-prem inference that answers it. Built at NS Apps Innovation, Sep–Nov 2026.</p>
+        <p>A working AI desk robot: firmware for a XIAO ESP32-S3 Sense that streams to an NVIDIA DGX Spark, and the on-prem inference that answers it. Built end to end at NS Apps Innovation, Sep–Nov 2026.</p>
       </div>
 
       <div class="feature-top">
@@ -397,7 +397,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
           <h3>ESP32-S3 Sense ⇄ DGX Spark</h3>
           <p class="ctx">The robot is a thin client. It captures and streams; the DGX sees, listens and decides.</p>
         </div>
-        <span class="tag-pill">Firmware running on the XIAO ESP32-S3 Sense</span>
+        <span class="tag-pill">Fully built · running end to end</span>
       </div>
 
       <figure class="dia">
@@ -459,6 +459,16 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         </div>
         <figcaption class="cap">Frames go out over HTTP(S) and never wait for inference. Audio and commands share one WebSocket, so the ESP32 only ever holds two TLS sessions. Polling takes over only while that socket is down, so no command is handled twice.</figcaption>
       </figure>
+
+      <div>
+          <div class="label sub-label">What it does on the desk</div>
+          <ul class="decisions" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); column-gap: 32px;">
+            <li><b>Wakes up when you walk in.</b><span>Someone appears and its eyes switch to awake; nobody in view for 3 s and it settles back to neutral.</span></li>
+            <li><b>Greets you by name.</b><span>Wave at it and it greets you, with a 10 s cooldown. Enrolled teammates are greeted by name.</span></li>
+            <li><b>Answers what it sees.</b><span>Say “Hey Yoda, what can you see?” and Qwen3-VL describes the live camera frame. It reacts only to its wake phrase.</span></li>
+            <li><b>Keeps conversations private.</b><span>Speech not addressed to it is transcribed in memory and dropped. Audio is never written to disk.</span></li>
+          </ul>
+        </div>
 
       <div class="split2">
         <div>
@@ -613,7 +623,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         <div>
           <h3>NS Apps Innovation</h3>
           <p class="sub">AI/ML &amp; React Developer Intern</p>
-          <p class="sum">Wrote and brought up the Yoda ESP32-S3 firmware, built the on-prem inference stack on the DGX Spark, and benchmarked local LLMs for a CPU-only retrieval assistant.</p>
+          <p class="sum">Built Yoda end to end, from the ESP32-S3 firmware on the robot to the on-prem inference stack on the DGX Spark, and benchmarked local LLMs for a CPU-only retrieval assistant.</p>
         </div>
       </div>
       <div class="role-row">

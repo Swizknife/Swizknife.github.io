@@ -456,11 +456,11 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
 
         <article class="mc">
           <div class="mc-head">
-            <div><h3>Yoda: Multimodal Robot Backend</h3><p class="ctx">NS Apps Innovation · 2026 · vision + voice on an NVIDIA DGX Spark</p></div>
-            <span class="status">Company project · code not public</span>
+            <div><h3>Yoda: Multimodal Robot Backend</h3><p class="ctx">NS Apps Innovation · 2026 · a working desk robot, vision + voice on an NVIDIA DGX Spark</p></div>
+            <span class="status">Fully built · running on the robot</span>
           </div>
           <dl class="meta">
-            <dt>task</dt><dd>see, recognise and answer people at a desk robot, on-prem</dd>
+            <dt>task</dt><dd>the eyes and ears of a working desk robot: see, recognise and answer people, on-prem</dd>
             <dt>vision</dt><dd>RTMO-s pose → YuNet → SFace → FER+ · ONNX Runtime, PyTorch-free</dd>
             <dt>voice</dt><dd>Silero VAD → faster-whisper int8 → wake phrase → Qwen3-VL-8B</dd>
             <dt>compute</dt><dd>Grace CPU, ARM64 · no cloud</dd>
@@ -470,6 +470,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
               <h4>Approach</h4>
               <p>An asyncio FastAPI server accepts JPEG frames with a 202 and a drop-oldest queue, so the robot never waits for inference. Face ID is open-set: below a cosine of 0.363 a person stays UNKNOWN. Waves are detected from body keypoints.</p>
               <p>Audio streams over an authenticated WebSocket. Silero VAD cuts it into sentences (0.3 s pre-roll, 0.7 s pause). Only sentences that start with “Hey Yoda” go on to Qwen3-VL-8B, which answers about the live frame. Everything else is dropped in memory and never written to disk. A Pydantic allow-list decides which commands can reach the hardware.</p>
+              <p>On the desk, that means the robot wakes when someone walks up, greets a waving teammate by name, and answers “Hey Yoda, what can you see?” about the live camera frame.</p>
             </div>
             <div>
               <h4>Evaluation</h4>
@@ -602,7 +603,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         <div>
           <h3>NS Apps Innovation</h3>
           <p class="sub">AI/ML &amp; React Developer Intern</p>
-          <p class="sum">Built the MSME policy assistant and the Yoda robot's multimodal backend: retrieval, reranking, vision and voice, all served locally.</p>
+          <p class="sum">Built the MSME policy assistant and the multimodal backend of Yoda, a working AI desk robot: retrieval, reranking, vision and voice, all served locally.</p>
         </div>
       </div>
       <div class="role-row">
