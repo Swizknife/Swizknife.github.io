@@ -97,7 +97,11 @@ code { font-size: 0.86em; }
 .js .d-copy > .kicker { animation-delay: 0.3s; }
 .js .d-copy > .d-role { animation-delay: 1s; }
 .js .d-copy > .d-lede { animation-delay: 1.15s; }
-.js .d-copy > .d-cta { animation-delay: 1.3s; }
+.js .d-copy > .d-build { animation-delay: 1.3s; }
+.js .d-copy > .d-cta { animation-delay: 1.45s; }
+.d-build { margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 860px; }
+.d-build li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-size: 0.86rem; color: #f6eee4; background: rgb(13 11 18 / 0.55); border: 1px solid rgb(255 255 255 / 0.18); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.d-build li::before { content: "→"; color: var(--orange); font-weight: 700; }
 @keyframes rise { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .hint { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; font: 0.7rem var(--f-mono); letter-spacing: 0.24em; text-transform: uppercase; color: #eadfd3; opacity: calc(1 - var(--p) * 4); }
 .hint i { display: block; width: 1px; height: 42px; background: linear-gradient(var(--gold), transparent); animation: hint 1.8s ease-in-out infinite; transform-origin: top; }
@@ -322,7 +326,8 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         <div class="kicker">B.Tech ECE · BIT Mesra · Class of 2028</div>
         <h1 class="split">Soumya Sharma</h1>
         <p class="d-role">AI-ML Engineer</p>
-        <p class="d-lede">I build retrieval and perception systems and measure them carefully: a RAG assistant that answers exact facts from a knowledge graph in milliseconds, entity resolution over ten million noisy records, and a multimodal robot backend that sees and listens on CPU with no cloud.</p>
+        <p class="d-lede">I love building ML systems that scale, GenAI and agentic applications that stay reliable, and AI that runs on real hardware, not just the cloud. Day to day I work mostly in Python and C++, on a strong DSA foundation.</p>
+        <ul class="d-build" aria-label="What I build"><li>RAG &amp; agentic AI, reliable in production</li><li>Scalable ML: PyTorch, LightGBM, Transformers, LLM frameworks</li><li>Edge AI &amp; embedded robotics</li><li>Product layer in React, when needed</li></ul>
         <div class="d-cta">
           <a class="pill" href="#about">Begin the journey</a>
           <a class="pill ghost" href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub</a>

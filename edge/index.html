@@ -97,7 +97,11 @@ code { font-size: 0.86em; }
 .js .d-copy > .kicker { animation-delay: 0.3s; }
 .js .d-copy > .d-role { animation-delay: 1s; }
 .js .d-copy > .d-lede { animation-delay: 1.15s; }
-.js .d-copy > .d-cta { animation-delay: 1.3s; }
+.js .d-copy > .d-build { animation-delay: 1.3s; }
+.js .d-copy > .d-cta { animation-delay: 1.45s; }
+.d-build { margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 860px; }
+.d-build li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; font-size: 0.86rem; color: #f6eee4; background: rgb(13 11 18 / 0.55); border: 1px solid rgb(255 255 255 / 0.18); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.d-build li::before { content: "→"; color: var(--orange); font-weight: 700; }
 @keyframes rise { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
 .hint { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; font: 0.7rem var(--f-mono); letter-spacing: 0.24em; text-transform: uppercase; color: #eadfd3; opacity: calc(1 - var(--p) * 4); }
 .hint i { display: block; width: 1px; height: 42px; background: linear-gradient(var(--gold), transparent); animation: hint 1.8s ease-in-out infinite; transform-origin: top; }
@@ -323,6 +327,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         <h1 class="split">Soumya Sharma</h1>
         <p class="d-role">Edge AI &amp; Embedded Systems</p>
         <p class="d-lede">I write the firmware and the inference stack it talks to: an ESP32-S3 that streams camera and microphone over Wi-Fi without dropping samples, a DGX Spark that runs vision and speech on CPU with no cloud, and models small enough to sit inside a control loop.</p>
+        
         <div class="d-cta">
           <a class="pill" href="#about">Begin the journey</a>
           <a class="pill ghost" href="https://github.com/Swizknife" target="_blank" rel="noopener">GitHub</a>
