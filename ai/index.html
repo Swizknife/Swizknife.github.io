@@ -4,29 +4,40 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Soumya Sharma · AI-ML</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<script>try { if (localStorage.getItem("ss-mode") === "light") document.documentElement.setAttribute("data-mode", "light"); } catch (e) {}</script>
 <meta name="description" content="Soumya Sharma: AI-ML engineer. Retrieval with knowledge graphs, entity resolution at 10M-record scale, and an on-prem multimodal robot backend.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="preload" as="image" href="scene-pagoda.jpg">
 <style>
-/* Layout: a cinematic descent. A sticky hero zooms into a pagoda sunset as you scroll; each chapter is a full-screen scene that slides over the last, with frosted panels carrying the content. Single light look by design: warm paper and navy ink; scenes fade into the page. */
+/* Layout: a cinematic descent. A sticky hero zooms into a pagoda sunset as you scroll; each chapter is a full-screen scene that slides over the last, with frosted panels carrying the content. Dark by default with a light mode the visitor can switch to; scenes stay full-bleed behind the content. */
 :root {
-  --bg: #fbf8f3;
-  --paper: #f4efe6;
-  --glass: rgb(255 252 247 / 0.86);
-  --surface: rgb(28 35 64 / 0.035);
-  --sunk: rgb(28 35 64 / 0.05);
-  --line: rgb(28 35 64 / 0.12);
-  --ink: #1c2340;
-  --muted: #5d6275;
-  --orange: #e8771e;
-  --orange-ink: #a14b0a;
-  --gold: #9a5c00;
+  --bg: #0d0b12;
+  --paper: #1a1520;
+  --glass: rgb(17 13 23 / 0.8);
+  --surface: rgb(255 255 255 / 0.045);
+  --sunk: rgb(255 255 255 / 0.06);
+  --line: rgb(255 255 255 / 0.12);
+  --ink: #f6eee4;
+  --ink-2: #e9dfd4;
+  --muted: #c0b4a9;
+  --orange: #ff8a3d;
+  --orange-ink: #ffae74;
+  --gold: #ffd27a;
   --on-img: #fffaf3;
+  --veil-rgb: 13 11 18;
+  --shadow: rgb(0 0 0 / 0.38);
+  --ridge-back: #1c1320;
   --f-display: "Cinzel", "Trajan Pro", Georgia, serif;
   --f-body: "Instrument Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+:root[data-mode="light"] {
+  --bg: #fbf8f3; --paper: #f4efe6; --glass: rgb(255 252 247 / 0.86); --surface: rgb(28 35 64 / 0.035); --sunk: rgb(28 35 64 / 0.05);
+  --line: rgb(28 35 64 / 0.12); --ink: #1c2340; --ink-2: #2c3150; --muted: #5d6275; --orange: #e8771e; --orange-ink: #a14b0a; --gold: #9a5c00;
+  --veil-rgb: 251 248 243; --shadow: rgb(28 35 64 / 0.14); --ridge-back: #f1dcc8;
   color-scheme: light;
 }
 [hidden] { display: none !important; }
@@ -51,7 +62,7 @@ code { font-size: 0.86em; }
 /* Chrome: bar, progress, chapter counter, glow, embers */
 .top { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; z-index: 50; transition: background 0.35s ease, border-color 0.35s ease; border-bottom: 1px solid transparent; }
 .top .wrap { display: flex; align-items: center; gap: 12px; padding-block: 16px; }
-.top.scrolled { background: rgb(251 248 243 / 0.88); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-color: var(--line); }
+.top.scrolled { background: rgb(var(--veil-rgb) / 0.86); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-color: var(--line); }
 .brand { font-family: var(--f-display); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.92rem; text-decoration: none; color: var(--on-img); text-shadow: 0 2px 12px rgb(0 0 0 / 0.5); }
 .top.scrolled .brand { color: var(--ink); text-shadow: none; }
 .top .tag { font: 0.72rem var(--f-mono); color: rgb(255 250 243 / 0.8); }
@@ -60,8 +71,13 @@ code { font-size: 0.86em; }
 .top nav a { text-decoration: none; color: var(--on-img); text-shadow: 0 2px 10px rgb(0 0 0 / 0.5); }
 .top.scrolled nav a { color: var(--muted); text-shadow: none; }
 .top nav a:hover, .top.scrolled nav a:hover { color: var(--orange); }
+.mode { margin-left: 14px; width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgb(255 255 255 / 0.35); background: rgb(13 11 18 / 0.35); color: var(--on-img); cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: transform 0.25s ease; }
+.mode:hover { transform: rotate(-14deg); }
+.top.scrolled .mode { border-color: var(--line); background: var(--surface); color: var(--ink); }
+.mode svg { width: 18px; height: 18px; }
+:root[data-mode="light"] .mode .sun, :root:not([data-mode="light"]) .mode .moon { display: none; }
 .progress { position: fixed; top: 0; left: 0; width: 100%; height: 2px; z-index: 61; transform-origin: 0 50%; transform: scaleX(0); background: linear-gradient(90deg, var(--orange), var(--gold)); }
-.chapter-ix { position: fixed; left: max(20px, env(safe-area-inset-left, 0px)); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 45; display: flex; align-items: baseline; gap: 10px; opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none; text-shadow: 0 1px 10px rgb(251 248 243 / 0.9); }
+.chapter-ix { position: fixed; left: max(20px, env(safe-area-inset-left, 0px)); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); z-index: 45; display: flex; align-items: baseline; gap: 10px; opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none; text-shadow: 0 1px 10px rgb(var(--veil-rgb) / 0.9); }
 .chapter-ix.on { opacity: 1; transform: none; }
 .chapter-ix::before { content: ""; width: 34px; height: 2px; background: var(--ink); align-self: center; }
 .chapter-ix .n { font-family: var(--f-display); font-size: 1.9rem; font-weight: 700; }
@@ -88,7 +104,7 @@ code { font-size: 0.86em; }
 .d-ridge { position: absolute; left: -2%; bottom: -2px; width: 104%; }
 .d-ridge.back { height: 30%; transform: translateY(calc((1 - var(--p)) * 60%)); }
 .d-ridge.front { height: 30%; transform: translateY(calc((1 - var(--p)) * 100%)); }
-.d-dark { position: absolute; inset: 0; background: rgb(251 248 243 / calc(var(--p) * 0.92)); pointer-events: none; }
+.d-dark { position: absolute; inset: 0; background: rgb(var(--veil-rgb) / calc(var(--p) * 0.92)); pointer-events: none; }
 .d-copy { color: var(--on-img); position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; padding: 90px max(16px, env(safe-area-inset-right, 0px)) 60px max(16px, env(safe-area-inset-left, 0px)); transform: translateY(calc(var(--p) * -20vh)); opacity: calc(1 - var(--p) * 1.7); }
 .d-copy::before { content: ""; position: absolute; left: 50%; top: 50%; width: min(980px, 120vw); height: 70%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgb(13 11 18 / 0.55), transparent); z-index: -1; }
 .kicker { font: 500 0.74rem var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; color: #ffd27a; text-shadow: 0 2px 10px rgb(0 0 0 / 0.6); }
@@ -125,23 +141,20 @@ code { font-size: 0.86em; }
 .ch-bg { position: absolute; inset: 0; transition: transform 2.4s cubic-bezier(0.2, 0.7, 0.2, 1); }
 .js .chapter:not(.in) .ch-bg { transform: scale(1.18); }
 .ch-bg img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.ch-blur { display: none; }
-@media (min-aspect-ratio: 1/1) {
-  .chapter[data-portrait] .ch-blur { display: block; position: absolute; inset: -6%; width: 112%; height: 112%; object-fit: cover; filter: blur(32px) saturate(1.2); opacity: 0.85; }
-  .chapter[data-portrait] .ch-img { position: absolute; inset: 0; object-fit: contain; object-position: 84% 50% !important; filter: drop-shadow(0 24px 50px rgb(28 35 64 / 0.3)); }
-}
+.ch-img { object-position: var(--pos-m); }
+@media (min-aspect-ratio: 1/1) { .ch-img { object-position: var(--pos-d); } }
 .kb { animation: kb 30s ease-in-out infinite alternate; transform-origin: 45% 55%; }
 @keyframes kb { from { transform: scale(1.03); } to { transform: scale(1.14) translate(-1.2%, -1%); } }
-.ch-veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(251 248 243 / 0) 55%, rgb(251 248 243 / 0.45) 100%), rgb(251 248 243 / var(--v, 0)); }
-.ch-card { align-self: flex-start; max-width: min(780px, 100%); background: var(--glass); -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 3vw, 32px) clamp(20px, 3.4vw, 40px); box-shadow: 0 24px 60px rgb(28 35 64 / 0.16); }
+.ch-veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(var(--veil-rgb) / 0) 50%, rgb(var(--veil-rgb) / 0.5) 100%), rgb(var(--veil-rgb) / var(--v, 0)); }
+.ch-card { align-self: flex-start; max-width: min(780px, 100%); background: var(--glass); -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2); border: 1px solid var(--line); border-radius: 22px; padding: clamp(18px, 3vw, 32px) clamp(20px, 3.4vw, 40px); box-shadow: 0 24px 60px var(--shadow); }
 .ch-content { position: relative; z-index: 6; margin-top: -100vh; margin-top: -100svh; padding-bottom: 16vh; }
 .ch-head { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 14vh; }
 .ch-kicker { display: flex; align-items: center; gap: 12px; font: 500 0.74rem var(--f-mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--orange-ink); }
 .ch-kicker::before { content: ""; width: 40px; height: 2px; background: var(--orange); }
 .ch-head h2 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.4rem, 7.5vw, 5.6rem); line-height: 0.95; letter-spacing: 0.01em; margin-top: 14px; }
-.ch-head p { margin-top: 16px; max-width: 46ch; font-size: 1.15rem; color: #2c3150; }
+.ch-head p { margin-top: 16px; max-width: 46ch; font-size: 1.15rem; color: var(--ink-2); }
 .ch-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
-.slab { background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 3.6vw, 42px); box-shadow: 0 24px 70px rgb(28 35 64 / 0.14); min-width: 0; }
+.slab { background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); border: 1px solid var(--line); border-radius: 22px; padding: clamp(20px, 3.6vw, 42px); box-shadow: 0 24px 70px var(--shadow); min-width: 0; }
 .slab.feature { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; }
 .slab > * { min-width: 0; }
 .slab.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
@@ -155,7 +168,7 @@ code { font-size: 0.86em; }
 .about2 { display: grid; grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); gap: clamp(28px, 5vw, 64px); align-items: center; }
 .sq { position: relative; margin: 0 18px 64px 0; aspect-ratio: 1 / 1; width: 100%; max-width: 420px; }
 .sq::before { content: ""; position: absolute; inset: 18px -18px -18px 18px; border: 2px solid var(--orange); border-radius: 6px; }
-.sq img { position: relative; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; border-radius: 6px; box-shadow: 0 24px 60px rgb(28 35 64 / 0.25); max-width: 100%; }
+.sq img { position: relative; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 24%; border-radius: 6px; box-shadow: 0 24px 60px var(--shadow); max-width: 100%; }
 .sq figcaption { position: absolute; left: 0; right: -18px; top: calc(100% + 32px); text-align: center; font: 600 0.8rem var(--f-mono); letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
 .hello { font-family: var(--f-display); color: var(--gold); letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.95rem; }
 .lede { margin-top: 10px; font-size: clamp(1.4rem, 2.9vw, 2.2rem); line-height: 1.22; font-weight: 600; text-wrap: balance; }
@@ -262,7 +275,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
 .finale .ch-head { justify-content: center; align-items: center; text-align: center; padding-block: 120px 90px; }
 .finale .ch-head h2 { font-size: clamp(2.6rem, 8.5vw, 6.5rem); }
 .finale .ch-head p { margin-inline: auto; }
-.finale .ch-veil { background: radial-gradient(48% 40% at 50% 52%, rgb(251 248 243 / 0.88), rgb(251 248 243 / 0.5) 62%, rgb(251 248 243 / 0) 100%); }
+.finale .ch-veil { background: radial-gradient(48% 40% at 50% 52%, rgb(var(--veil-rgb) / 0.86), rgb(var(--veil-rgb) / 0.5) 62%, rgb(var(--veil-rgb) / 0) 100%); }
 .finale .flock { top: 12%; color: #2a1a14; }
 .email { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 22px; }
 .email code { padding: 8px 14px; border-radius: 999px; background: var(--glass); border: 1px solid var(--line); user-select: all; overflow-wrap: anywhere; }
@@ -275,13 +288,14 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
 .reveal { transition: opacity 0.8s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease; }
 .pre { opacity: 0; transform: translateY(34px); }
 .tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0px)); }
-.tilt:hover { --ty: -4px; border-color: rgb(232 119 30 / 0.5); box-shadow: 0 18px 40px rgb(28 35 64 / 0.14); }
+.tilt:hover { --ty: -4px; border-color: rgb(232 119 30 / 0.5); box-shadow: 0 18px 40px var(--shadow); }
 
 @media (max-width: 900px) {
   .about2, .about-row, .split2, .slab.two, .grid, .mc-body, .repos { grid-template-columns: minmax(0, 1fr); }
   .sq { max-width: 340px; }
   .stats, .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .top nav { display: none; }
+  .mode { margin-left: auto; }
   .chapter-ix { display: none; }
 }
 @media (max-width: 600px) {
@@ -323,6 +337,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     <a class="brand" href="#top">Soumya Sharma</a>
     <span class="tag">AI-ML</span>
     <nav aria-label="Sections"><a href="#about">About</a><a href="#work">Work</a><a href="#training">Training</a><a href="#toolkit">Toolkit</a><a href="#contact">Contact</a></nav>
+    <button type="button" class="mode" id="mode-toggle" aria-label="Switch to light mode"><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5 V5 M12 19 V21.5 M2.5 12 H5 M19 12 H21.5 M5.3 5.3 L7 7 M17 17 L18.7 18.7 M5.3 18.7 L7 17 M17 7 L18.7 5.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5 A8.5 8.5 0 1 1 9.5 4 A7 7 0 0 0 20 14.5 Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
   </div>
 </header>
 
@@ -335,8 +350,8 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
       <div class="mist"></div><div class="mist m2"></div>
       <svg class="flock" viewBox="0 0 260 90" aria-hidden="true"><path class="b" style="--d:0.09s" transform="translate(216 8) scale(0.85)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.35s" transform="translate(115 60) scale(1.09)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.55s" transform="translate(24 62) scale(0.72)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.59s" transform="translate(110 0) scale(1.12)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.19s" transform="translate(205 29) scale(1.05)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.07s" transform="translate(81 3) scale(0.71)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.45s" transform="translate(2 48) scale(1.11)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
       <svg class="flock f2" viewBox="0 0 260 90" aria-hidden="true"><path class="b" style="--d:0.67s" transform="translate(217 7) scale(0.75)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.25s" transform="translate(43 39) scale(0.85)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.15s" transform="translate(9 20) scale(1.3)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.45s" transform="translate(205 65) scale(1.27)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path class="b" style="--d:0.38s" transform="translate(113 64) scale(0.86)" d="M0 8 Q 6 0 12 7 Q 18 0 24 8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
-      <svg class="d-ridge back" viewBox="0 0 1600 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 400 V230 Q75 203 150 265 Q218 198 286 237 Q384 207 483 250 Q580 169 677 198 Q737 180 798 250 Q893 203 988 219 Q1078 183 1168 259 Q1263 228 1358 250 Q1427 189 1497 219 Q1548 197 1600 256 V400 Z" fill="#f1dcc8" fill-opacity="0.9"/></svg>
-      <svg class="d-ridge front" viewBox="0 0 1600 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 400 V300 L22 293 L75 305 L97 334 L110 198 L188 208 L212 320 L223 197 L308 196 L330 289 L360 287 L353 269 L381 318 L409 265 L444 255 L471 319 L481 285 L503 267 L512 292 L520 303 L560 303 L582 308 L606 200 L682 220 L697 298 L726 151 L790 160 L800 321 L825 254 L865 250 L875 300 L899 208 L995 189 L1012 284 L1032 177 L1113 175 L1124 304 L1153 154 L1164 147 L1172 293 L1192 270 L1188 275 L1218 306 L1246 294 L1253 291 L1267 301 L1285 229 L1310 235 L1318 328 L1333 184 L1343 170 L1373 280 L1396 269 L1407 284 L1420 292 L1434 280 L1505 286 L1517 321 L1537 179 L1579 172 L1600 280 V400 Z" fill="#fbf8f3"/></svg>
+      <svg class="d-ridge back" viewBox="0 0 1600 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 400 V230 Q75 203 150 265 Q218 198 286 237 Q384 207 483 250 Q580 169 677 198 Q737 180 798 250 Q893 203 988 219 Q1078 183 1168 259 Q1263 228 1358 250 Q1427 189 1497 219 Q1548 197 1600 256 V400 Z" style="fill: var(--ridge-back)" fill-opacity="0.9"/></svg>
+      <svg class="d-ridge front" viewBox="0 0 1600 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 400 V300 L22 293 L75 305 L97 334 L110 198 L188 208 L212 320 L223 197 L308 196 L330 289 L360 287 L353 269 L381 318 L409 265 L444 255 L471 319 L481 285 L503 267 L512 292 L520 303 L560 303 L582 308 L606 200 L682 220 L697 298 L726 151 L790 160 L800 321 L825 254 L865 250 L875 300 L899 208 L995 189 L1012 284 L1032 177 L1113 175 L1124 304 L1153 154 L1164 147 L1172 293 L1192 270 L1188 275 L1218 306 L1246 294 L1253 291 L1267 301 L1285 229 L1310 235 L1318 328 L1333 184 L1343 170 L1373 280 L1396 269 L1407 284 L1420 292 L1434 280 L1505 286 L1517 321 L1537 179 L1579 172 L1600 280 V400 Z" style="fill: var(--bg)"/></svg>
       <div class="d-dark"></div>
       <div class="d-copy">
         <div class="kicker">B.Tech ECE · BIT Mesra · Class of 2028</div>
@@ -356,9 +371,9 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
   </section>
 
-  <section class="chapter" id="about" data-name="Who I am" data-portrait>
+  <section class="chapter" id="about" data-name="Who I am" style="--pos-m:50% 72%;--pos-d:50% 60%">
     <div class="ch-sticky">
-      <div class="ch-bg"><img class="ch-blur" src="scene-walk.jpg" alt=""><img class="kb ch-img" src="scene-walk.jpg" alt="" style="object-position:50% 72%"></div>
+      <div class="ch-bg"><img class="kb ch-img" src="scene-walk.jpg" alt=""></div>
       <div class="ch-veil"></div>
     </div>
     <div class="ch-content">
@@ -392,9 +407,9 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
   </section>
 
-  <section class="chapter" id="work" data-name="Model Cards" data-portrait>
+  <section class="chapter" id="work" data-name="Model Cards" style="--pos-m:50% 45%;--pos-d:50% 38%">
     <div class="ch-sticky">
-      <div class="ch-bg"><img class="ch-blur" src="scene-path.jpg" alt=""><img class="kb ch-img" src="scene-path.jpg" alt="" style="object-position:50% 45%"></div>
+      <div class="ch-bg"><img class="kb ch-img" src="scene-path.jpg" alt=""></div>
       <div class="ch-veil"></div>
     </div>
     <div class="ch-content">
@@ -591,9 +606,9 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
   </section>
 
-  <section class="chapter" id="training" data-name="The Training Ground" data-portrait>
+  <section class="chapter" id="training" data-name="The Training Ground" style="--pos-m:50% 62%;--pos-d:50% 68%">
     <div class="ch-sticky">
-      <div class="ch-bg"><img class="ch-blur" src="scene-team.jpg" alt=""><img class="kb ch-img" src="scene-team.jpg" alt="" style="object-position:50% 62%"></div>
+      <div class="ch-bg"><img class="kb ch-img" src="scene-team.jpg" alt=""></div>
       <div class="ch-veil"></div>
     </div>
     <div class="ch-content">
@@ -640,9 +655,9 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
   </section>
 
-  <section class="chapter" id="toolkit" data-name="The Toolkit" data-portrait>
+  <section class="chapter" id="toolkit" data-name="The Toolkit" style="--pos-m:50% 52%;--pos-d:50% 55%">
     <div class="ch-sticky">
-      <div class="ch-bg"><img class="ch-blur" src="scene-torii.jpg" alt=""><img class="kb ch-img" src="scene-torii.jpg" alt="" style="object-position:50% 52%"></div>
+      <div class="ch-bg"><img class="kb ch-img" src="scene-torii.jpg" alt=""></div>
       <div class="ch-veil"></div>
     </div>
     <div class="ch-content">
@@ -717,6 +732,20 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
   </section>
 </main>
 
+<script>
+(function () {
+  var b = document.getElementById("mode-toggle"), root = document.documentElement;
+  if (!b) return;
+  function sync() { b.setAttribute("aria-label", root.getAttribute("data-mode") === "light" ? "Switch to dark mode" : "Switch to light mode"); }
+  sync();
+  b.addEventListener("click", function () {
+    var light = root.getAttribute("data-mode") !== "light";
+    if (light) root.setAttribute("data-mode", "light"); else root.removeAttribute("data-mode");
+    try { localStorage.setItem("ss-mode", light ? "light" : "dark"); } catch (e) {}
+    sync();
+  });
+})();
+</script>
 <script>
 (function () {
   var copyBtn = document.getElementById("copy-email");
