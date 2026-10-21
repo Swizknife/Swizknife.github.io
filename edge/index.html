@@ -156,7 +156,11 @@ code { font-size: 0.86em; }
 .now li::before { content: ""; width: 9px; height: 9px; margin-top: 0.55em; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 4px rgb(255 138 61 / 0.18); }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .chips span { font-size: 0.86rem; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
-.off { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 28px; }
+.off { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 28px; }
+.build-h { margin-top: 22px; }
+.build-list { margin-top: 10px; display: grid; gap: 8px; }
+.build-list li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; }
+.build-list li::before { content: "→"; color: var(--orange); font-weight: 700; }
 .hobby2 { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
 .hobby2 svg { width: 30px; height: 30px; color: var(--orange-ink); }
 .hobby2 h3 { margin-top: 10px; font-family: var(--f-display); font-size: 1rem; letter-spacing: 0.04em; }
@@ -251,9 +255,6 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
 .icon { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: rgb(13 11 18 / 0.6); border: 1px solid rgb(255 255 255 / 0.25); color: var(--ink); text-decoration: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: transform 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
 .icon:hover { transform: translateY(-3px) rotate(-4deg); border-color: var(--orange); color: var(--orange-ink); }
 .icon svg { width: 20px; height: 20px; }
-.other { margin-top: 26px; font: 500 0.85rem var(--f-mono); }
-.other a { color: var(--gold); }
-.credit { margin-top: 30px; max-width: 70ch; font-size: 0.74rem; color: rgb(234 223 211 / 0.7); }
 
 /* Motion helpers */
 .reveal { transition: opacity 0.8s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease; }
@@ -264,7 +265,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
 @media (max-width: 900px) {
   .about2, .about-row, .split2, .slab.two, .grid, .mc-body, .repos { grid-template-columns: minmax(0, 1fr); }
   .sq { max-width: 340px; }
-  .stats, .off, .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats, .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .top nav { display: none; }
   .chapter-ix { display: none; }
 }
@@ -300,11 +301,11 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     <svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>
     <a class="brand" href="#top">Soumya Sharma</a>
     <span class="tag">Edge AI &amp; Embedded</span>
-    <nav aria-label="Sections"><a href="#about">About</a><a href="#yoda">Build</a><a href="#work">Projects</a><a href="#journey">Journey</a><a href="#contact">Contact</a></nav>
+    <nav aria-label="Sections"><a href="#about">About</a><a href="#yoda">Build</a><a href="#journey">Journey</a><a href="#contact">Contact</a></nav>
   </div>
 </header>
 
-<div class="chapter-ix" aria-hidden="true"><span class="n">01</span><span class="of">/ 05</span><span class="name">Who I am</span></div>
+<div class="chapter-ix" aria-hidden="true"><span class="n">01</span><span class="of">/ 04</span><span class="name">Who I am</span></div>
 
 <main id="top">
   <section class="descent" aria-label="Introduction">
@@ -353,20 +354,16 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
               <p class="hello">Hi, I'm Soumya</p>
               <p class="lede">I build <em>firmware and on-device ML</em> that hold up when you measure them.</p>
               <p class="about-body">I'm an Electronics &amp; Communication undergraduate at BIT Mesra, Patna, graduating in 2028. I like the point where hardware meets machine learning: getting a camera and a microphone onto Wi-Fi without losing a sample, and getting a model small or fast enough to live next to them.</p>
+              
               <div class="stats"><div class="stat"><b>2 s</b><span>of mic audio buffered in PSRAM, so no sample is dropped</span></div><div class="stat"><b>60–70 ms</b><span>per frame for on-prem vision, on CPU</span></div><div class="stat"><b>99.37%</b><span>MPPT tracking, digital-twin simulation</span></div><div class="stat"><b>~450</b><span>students taught in ML and Arduino workshops</span></div></div>
             </div>
           </div>
           <div class="about-row">
-            <div><h3 class="sub-h">Right now</h3><ul class="now"><li>Interning at NS Apps Innovation, Sep–Nov 2026</li><li>Undergraduate research on nanopore signal processing, BIT Mesra</li><li>Next on the bench: a TinyML person detector on the ESP32-S3</li></ul></div>
+            <div><h3 class="sub-h">Right now</h3><ul class="now"><li>Interning at NS Apps Innovation, Sep–Nov 2026</li><li>Undergraduate research on nanopore signal processing, BIT Mesra</li></ul></div>
             <div><h3 class="sub-h">Interests</h3><div class="chips"><span>Embedded firmware</span><span>On-device inference</span><span>Sensor signal processing</span><span>TinyML</span><span>Control-loop ML</span></div></div>
           </div>
           <h3 class="sub-h" style="margin-top:34px">Off the clock</h3>
-          <div class="off">
-            <div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12 H21 M12 3 V21 M5.6 5.6 C9 9 9 15 5.6 18.4 M18.4 5.6 C15 9 15 15 18.4 18.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><h3>Basketball &amp; chess</h3><p>Basketball gold, 2× inter-branch and inter-college. Chess gold, inter-branch.</p></div>
-            <div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 L13 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12.5 10.5 C10 8.5 6.5 9 5 11.5 C3.5 14 4.5 17.5 6.5 19 C8.5 20.5 12 20 13.5 17.5 C14.5 16 14 13.5 13.5 12.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="9" cy="15" r="1.6" fill="currentColor"/><path d="M19 3 L21 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>Guitar &amp; band</h3><p>Guitarist with Pratibimb Society; our band took 1st prize.</p></div>
-            <div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L7 13 L16 4 L20 8 L11 17 Z M4 20 L9.5 15.5 M14 6 L18 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg><h3>Design &amp; teaching</h3><p>Brochures and publicity for Ignite and TECHNIKA; an Arduino workshop for ~150 and ML workshops for ~300.</p></div>
-            <div class="hobby2"><svg viewBox="5 5 14 14" aria-hidden="true"><path d="M12 12 a1 1 0 0 1 2 0 a2 2 0 0 1 -4 0 a3 3 0 0 1 6 0 a4 4 0 0 1 -8 0 a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><h3>Anime</h3><p>A long-time Naruto fan. This whole site is a nod to it.</p></div>
-          </div>
+          <div class="off"><div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 12 H21 M12 3 V21 M5.6 5.6 C9 9 9 15 5.6 18.4 M18.4 5.6 C15 9 15 15 18.4 18.4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><h3>Basketball &amp; chess</h3><p>Basketball gold, 2× inter-branch and inter-college. Chess gold, inter-branch.</p></div><div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 L13 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12.5 10.5 C10 8.5 6.5 9 5 11.5 C3.5 14 4.5 17.5 6.5 19 C8.5 20.5 12 20 13.5 17.5 C14.5 16 14 13.5 13.5 12.5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="9" cy="15" r="1.6" fill="currentColor"/><path d="M19 3 L21 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><h3>Guitar &amp; band</h3><p>Guitarist with Pratibimb Society; our band took 1st prize.</p></div><div class="hobby2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L7 13 L16 4 L20 8 L11 17 Z M4 20 L9.5 15.5 M14 6 L18 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg><h3>Design &amp; teaching</h3><p>Brochures and publicity for Ignite and TECHNIKA; an Arduino workshop for ~150 and ML workshops for ~300.</p></div><div class="hobby2"><svg viewBox="5 5 14 14" aria-hidden="true"><path d="M12 12 a1 1 0 0 1 2 0 a2 2 0 0 1 -4 0 a3 3 0 0 1 6 0 a4 4 0 0 1 -8 0 a5 5 0 0 1 10 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><h3>Anime</h3><p>A long-time Naruto fan. This whole site is a nod to it.</p></div></div>
         </div>
       </div>
     </div>
@@ -381,7 +378,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
       <header class="ch-head wrap">
         <div class="ch-kicker">Chapter 02</div>
         <h2 class="split">The Build</h2>
-        <p>Yoda DeskBot: an ESP32-S3 that streams to an on-prem DGX Spark.</p>
+        <p>Yoda DeskBot, and everything else I've built close to the signal.</p>
       </header>
       <div class="wrap ch-body">
         <div class="slab feature">
@@ -511,22 +508,6 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
         <div class="card-foot"><span class="status">Company project · code not public · 167 backend tests</span></div>
       </article>
     </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="chapter" id="work" data-name="On the Bench">
-    <div class="ch-sticky">
-      <div class="ch-bg"><img class="kb" src="scene-team.jpg" alt="" style="object-position:50% 62%"></div>
-      <div class="ch-veil"></div>
-    </div>
-    <div class="ch-content">
-      <header class="ch-head wrap">
-        <div class="ch-kicker">Chapter 03</div>
-        <h2 class="split">On the Bench</h2>
-        <p>More things I've built close to the signal.</p>
-      </header>
-      <div class="wrap ch-body">
         <div class="slab ">
       <div class="sec-head">
         <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>More builds</div><h2>On-device and close to the signal</h2></div>
@@ -615,7 +596,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
     <div class="ch-content">
       <header class="ch-head wrap">
-        <div class="ch-kicker">Chapter 04</div>
+        <div class="ch-kicker">Chapter 03</div>
         <h2 class="split">The Journey</h2>
         <p>Internship, research, toolkit and the rest.</p>
       </header>
@@ -682,7 +663,7 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
     </div>
     <div class="ch-content">
       <div class="ch-head wrap">
-        <div class="ch-kicker">Chapter 05</div>
+        <div class="ch-kicker">Chapter 04</div>
         <h2 class="split">Let's build something</h2>
         <p>Looking for Edge AI and embedded internships.</p>
         <div class="email">
@@ -697,8 +678,6 @@ figcaption.cap { margin-top: 14px; color: var(--muted); font-size: 0.9rem; max-w
           <a class="icon" href="Soumya_Sharma_edge.pdf" target="_blank" rel="noopener" aria-label="Resume PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 H14 L19 8 V21 H6 Z M14 3 V8 H19 M9 13 H16 M9 17 H16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></a>
 <!--/pages-only-->
         </div>
-        <p class="other"><a href="../ai/">Looking for the AI-ML portfolio? →</a></p>
-        <p class="credit">Naruto artwork © Masashi Kishimoto / Shueisha · TV Tokyo · Pierrot, shown here as fan art. Other scenery collected from Pinterest; all rights stay with the original artists.</p>
       </div>
     </div>
   </section>
