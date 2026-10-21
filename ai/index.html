@@ -41,7 +41,6 @@ code { font-size: 0.86em; }
 .wrap { max-width: 1120px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .label { display: inline-flex; align-items: center; gap: 8px; font: 500 0.72rem var(--f-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
 .spiral { width: 16px; height: 16px; flex: none; color: var(--orange); }
-.scene { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block; }
 
 .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgb(251 248 243 / 0.92); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .bar .wrap { display: flex; align-items: center; gap: 12px; padding-block: 12px; }
@@ -227,7 +226,6 @@ footer p { color: var(--muted); margin-top: 8px; max-width: 56ch; }
 
 footer { background: var(--sunk); border-top: 0; clip-path: polygon(0 16%, 100% 0, 100% 100%, 0 100%); }
 footer .wrap { padding-block: 104px 64px; }
-footer .scene { opacity: 0.7; }
 .icons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .icon { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .icon:hover { border-color: var(--orange); color: var(--orange-ink); }
@@ -244,6 +242,49 @@ footer .scene { opacity: 0.7; }
   .hobbies { grid-template-columns: minmax(0, 1fr); }
   .band { clip-path: polygon(0 3%, 100% 0, 100% 97%, 0 100%); }
   footer { clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 100%); }
+}
+
+/* Motion: load-in sequence, parallax + slow zoom on the photographs, scroll reveals, hover lifts. Reduced motion turns all of it off. */
+.px { position: absolute; left: 0; right: 0; top: -12%; bottom: -12%; will-change: transform; }
+.px img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.band .px img { object-position: 50% 45%; }
+.kb { animation: kb 28s ease-in-out infinite alternate; transform-origin: 42% 58%; }
+@keyframes kb { from { transform: scale(1.04); } to { transform: scale(1.16) translate(-1.5%, -1%); } }
+
+@keyframes sunIn { from { transform: scale(0.35); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes photoIn { from { transform: translate(-50%, 56px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+@keyframes rise { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-art .sun { animation: sunIn 0.9s cubic-bezier(0.2, 0.9, 0.25, 1.15) both; }
+.hero-art .swirl { animation: spin 60s linear infinite; }
+.photo { overflow: hidden; animation: photoIn 0.85s 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.photo img { transition: transform 0.6s ease; }
+.photo:hover img { transform: scale(1.05); }
+.hero .wrap > div:last-child > * { animation: rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.hero .wrap > div:last-child > :nth-child(1) { animation-delay: 0.45s; }
+.hero .wrap > div:last-child > :nth-child(2) { animation-delay: 0.53s; }
+.hero .wrap > div:last-child > :nth-child(3) { animation-delay: 0.61s; }
+.hero .wrap > div:last-child > :nth-child(4) { animation-delay: 0.69s; }
+.hero .wrap > div:last-child > :nth-child(5) { animation-delay: 0.77s; }
+.hero .wrap > div:last-child > :nth-child(6) { animation-delay: 0.85s; }
+.hero .wrap > div:last-child > :nth-child(7) { animation-delay: 0.93s; }
+.hero .wrap > div:last-child > :nth-child(8) { animation-delay: 1.01s; }
+
+.reveal { transition: opacity 0.7s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease; }
+.pre { opacity: 0; transform: translateY(28px); }
+.card:hover, .mc:hover, .hobby:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgb(28 35 64 / 0.1); }
+.btn, .icon { transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease; }
+.btn:hover, .icon:hover { transform: translateY(-2px); }
+
+.foot-side { display: grid; justify-items: end; gap: 16px; }
+.foot-tile { margin: 0; width: 140px; aspect-ratio: 265 / 473; overflow: hidden; background: var(--surface); padding: 6px; box-shadow: 0 12px 28px rgb(28 35 64 / 0.18); transform: rotate(3deg); transition: transform 0.35s ease; }
+.foot-tile:hover { transform: rotate(0deg) scale(1.04); }
+.foot-tile img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 600px) { .foot-side { justify-items: start; } .foot-tile { width: 110px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .pre { opacity: 1; transform: none; }
 }
 </style>
 </head>
@@ -301,7 +342,7 @@ footer .scene { opacity: 0.7; }
   </div>
 
   <div class="band">
-    <canvas class="scene" data-scene="sunset" aria-hidden="true"></canvas>
+    <div class="px" data-parallax="0.25"><img class="kb" src="ref-village.jpg" alt="" width="480" height="260"></div>
     <div class="wrap">
       <div class="panel">
         <h2>Evaluation summary</h2>
@@ -328,7 +369,7 @@ footer .scene { opacity: 0.7; }
         <div><div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>About me</div><h2>Models that hold up when measured</h2></div>
       </div>
       <div class="about-grid">
-        <div class="about-art"><canvas class="scene" data-scene="ridge" aria-hidden="true"></canvas></div>
+        <div class="about-art"><div class="px" data-parallax="0.12"><img class="kb" src="ref-team.jpg" alt="" width="255" height="177"></div></div>
         <div class="bio">
           <p>I'm an Electronics &amp; Communication undergraduate at BIT Mesra, Patna, graduating in 2028. I like ML systems where the evaluation gets as much care as the model: retrieval that knows when not to answer, matching at ten-million-record scale, and perception that runs without the cloud.</p>
           <p>Every number I report comes with the data it was measured on.</p>
@@ -607,7 +648,6 @@ footer .scene { opacity: 0.7; }
 </main>
 
 <footer id="contact">
-  <canvas class="scene" data-scene="falls" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
       <div class="label"><svg class="spiral" aria-hidden="true"><use href="#spiral"/></svg>Contact</div>
@@ -622,9 +662,12 @@ footer .scene { opacity: 0.7; }
 <!--/pages-only-->
       </div>
     </div>
-    <div class="foot-note">
-      <a href="../edge/">Edge AI &amp; embedded portfolio →</a>
-      <span class="art-credit">Landscapes are original illustrations.</span>
+    <div class="foot-side">
+      <figure class="foot-tile"><img class="kb" src="ref-leaf.jpg" alt="" width="265" height="473"></figure>
+      <div class="foot-note">
+        <a href="../edge/">Edge AI &amp; embedded portfolio →</a>
+        <span>Naruto images © Masashi Kishimoto / Shueisha · TV Tokyo · Pierrot, shown here as fan art.</span>
+      </div>
     </div>
   </div>
 </footer>
@@ -646,119 +689,36 @@ footer .scene { opacity: 0.7; }
 </script>
 <script>
 (function () {
-  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }; }
-  function ink(a) { return "rgba(28,35,64," + a + ")"; }
-  function ridge(ctx, w, h, base, amp, step, R, color) {
-    ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, h);
-    var y = base;
-    for (var x = 0; x <= w + step; x += step) {
-      y += (R() - 0.5) * amp; y = Math.max(base - amp * 1.6, Math.min(base + amp * 0.6, y));
-      ctx.lineTo(x, y);
-    }
-    ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var targets = document.querySelectorAll(".sec-head, .card, .mc, .hobby, .role-row, .skills > div, .facts li, .band .panel, figure.dia, .decisions li, .repos li, .about-art, .slant, .foot-tile");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.remove("pre"); io.unobserve(e.target); } });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    var vh0 = window.innerHeight;
+    targets.forEach(function (el) {
+      el.classList.add("reveal");
+      if (el.getBoundingClientRect().top > vh0) { el.classList.add("pre"); io.observe(el); }
+    });
   }
-  function house(ctx, x, base, bw, bh, color) {
-    var over = Math.max(5, bw * 0.12), peak = Math.max(8, bw * 0.22);
-    ctx.fillStyle = color;
-    ctx.fillRect(x, base - bh, bw, bh);
-    ctx.beginPath();
-    ctx.moveTo(x - over, base - bh);
-    ctx.quadraticCurveTo(x + bw * 0.2, base - bh - peak * 0.35, x + bw / 2, base - bh - peak);
-    ctx.quadraticCurveTo(x + bw * 0.8, base - bh - peak * 0.35, x + bw + over, base - bh);
-    ctx.closePath(); ctx.fill();
+  var layers = [].slice.call(document.querySelectorAll("[data-parallax]"));
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var vh = window.innerHeight;
+    layers.forEach(function (el) {
+      var r = el.parentElement.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) return;
+      var off = (r.top + r.height / 2 - vh / 2) * parseFloat(el.dataset.parallax);
+      var lim = r.height * 0.11;
+      off = Math.max(-lim, Math.min(lim, off));
+      el.style.transform = "translate3d(0," + (-off).toFixed(1) + "px,0)";
+    });
   }
-  function coneTower(ctx, x, base, tw, th, body, shade) {
-    ctx.fillStyle = body; ctx.fillRect(x, base - th, tw, th);
-    ctx.strokeStyle = shade; ctx.lineWidth = 1.5;
-    for (var y = base - th + 10; y < base; y += 12) { ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + tw, y); ctx.stroke(); }
-    ctx.fillStyle = body; ctx.beginPath();
-    ctx.moveTo(x - tw * 0.12, base - th);
-    ctx.quadraticCurveTo(x + tw * 0.35, base - th - tw * 0.35, x + tw / 2, base - th - tw * 0.9);
-    ctx.quadraticCurveTo(x + tw * 0.65, base - th - tw * 0.35, x + tw * 1.12, base - th);
-    ctx.closePath(); ctx.fill();
-    ctx.beginPath(); ctx.arc(x + tw / 2, base - th - tw * 0.95, Math.max(3, tw * 0.08), 0, Math.PI * 2); ctx.fill();
-  }
-  function dome(ctx, x, base, dw, dh, body) {
-    ctx.fillStyle = body; ctx.fillRect(x, base - dh, dw, dh);
-    ctx.beginPath(); ctx.ellipse(x + dw / 2, base - dh, dw / 2, dw * 0.28, 0, Math.PI, 0); ctx.fill();
-  }
-  var scenes = {
-    sunset: function (ctx, w, h, R) {
-      var g = ctx.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, "#e58f58"); g.addColorStop(0.45, "#f2b68b"); g.addColorStop(1, "#f8d8bb");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-      var mx = w * 0.34, my = h * 0.62, mr = Math.min(h * 0.32, w * 0.2);
-      var glow = ctx.createRadialGradient(mx, my, mr * 0.6, mx, my, mr * 2.2);
-      glow.addColorStop(0, "rgba(253,238,220,0.7)"); glow.addColorStop(1, "rgba(253,238,220,0)");
-      ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "rgba(253,241,228,0.92)"; ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2); ctx.fill();
-      for (var c = 0; c < 16; c++) {
-        ctx.fillStyle = "rgba(186,82,38," + (0.12 + R() * 0.16) + ")";
-        ctx.beginPath(); ctx.ellipse(R() * w, R() * h * 0.42, 50 + R() * 120, 5 + R() * 9, (R() - 0.5) * 0.12, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.strokeStyle = "rgba(100,40,18,0.75)"; ctx.lineWidth = 1.6; ctx.lineCap = "round";
-      for (var b = 0; b < 9; b++) {
-        var bx = w * 0.2 + R() * w * 0.16, by = h * 0.12 + R() * h * 0.14, s = 4 + R() * 4;
-        ctx.beginPath(); ctx.moveTo(bx - s, by); ctx.quadraticCurveTo(bx - s / 2, by - s * 0.7, bx, by); ctx.quadraticCurveTo(bx + s / 2, by - s * 0.7, bx + s, by); ctx.stroke();
-      }
-      ctx.fillStyle = "#cf7343"; ctx.beginPath(); ctx.moveTo(w * 0.8, h); ctx.lineTo(w * 0.83, h * 0.42);
-      var x = w * 0.83; while (x < w) { x += 16 + R() * 24; ctx.lineTo(Math.min(x, w), h * (0.3 + R() * 0.1)); }
-      ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = "rgba(140,56,24,0.35)"; ctx.lineWidth = 1.5;
-      for (var s2 = 0; s2 < 7; s2++) { var sx = w * (0.85 + s2 * 0.022); ctx.beginPath(); ctx.moveTo(sx, h * 0.45); ctx.lineTo(sx + 5, h * 0.8); ctx.stroke(); }
-      var base1 = h * 0.86; x = -10;
-      while (x < w) { var bw = 26 + R() * 34; house(ctx, x, base1, bw, 14 + R() * 26, "#da8c5a"); x += bw + 6 + R() * 10; }
-      coneTower(ctx, w * 0.06, h + 2, Math.max(60, w * 0.08), h * 0.3, "#c4693b", "rgba(110,44,18,0.35)");
-      dome(ctx, w * 0.62, base1 + 6, Math.max(70, w * 0.1), h * 0.18, "#c86f40");
-      coneTower(ctx, w * 0.74, h + 2, Math.max(50, w * 0.065), h * 0.2, "#bf6436", "rgba(110,44,18,0.35)");
-      x = -20; while (x < w) { var fw = 46 + R() * 50; house(ctx, x, h + 2, fw, 20 + R() * 30, "#b65c2f"); x += fw + 12 + R() * 20; }
-    },
-    ridge: function (ctx, w, h, R) {
-      var g = ctx.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, "#ec9a62"); g.addColorStop(0.5, "#f6c79c"); g.addColorStop(0.62, "#fbe3c8"); g.addColorStop(1, "#fbe3c8");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-      var sx = w * 0.68, sy = h * 0.6;
-      var glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, h * 0.4);
-      glow.addColorStop(0, "rgba(255,236,205,0.95)"); glow.addColorStop(1, "rgba(255,236,205,0)");
-      ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = "#fff4e4"; ctx.beginPath(); ctx.arc(sx, sy, h * 0.06, 0, Math.PI * 2); ctx.fill();
-      for (var c = 0; c < 10; c++) {
-        ctx.fillStyle = "rgba(170,74,46," + (0.14 + R() * 0.14) + ")";
-        ctx.beginPath(); ctx.ellipse(R() * w, R() * h * 0.4, 40 + R() * 90, 4 + R() * 6, 0, 0, Math.PI * 2); ctx.fill();
-      }
-      ridge(ctx, w, h, h * 0.62, 18, 26, R, "#dd916a");
-      ridge(ctx, w, h, h * 0.7, 22, 30, R, "#c77654");
-      ridge(ctx, w, h, h * 0.8, 26, 34, R, "#9d5a45");
-      ridge(ctx, w, h, h * 0.9, 16, 40, R, "#6f4139");
-    },
-    falls: function (ctx, w, h, R) {
-      var l = w * 0.56, r = w * 0.78;
-      ctx.strokeStyle = "rgba(96,128,170,0.16)";
-      for (var i = 0; i < 70; i++) { var sx = l + R() * (r - l); ctx.lineWidth = 1 + R() * 2.5; ctx.beginPath(); ctx.moveTo(sx, h * 0.12 + R() * 20); ctx.lineTo(sx + (R() - 0.5) * 6, h); ctx.stroke(); }
-      ctx.fillStyle = "rgba(96,128,170,0.08)"; ctx.fillRect(l, h * 0.12, r - l, h);
-      ctx.fillStyle = ink(0.085); ctx.beginPath(); ctx.moveTo(w * 0.4, h); ctx.lineTo(w * 0.42, h * 0.3);
-      var x = w * 0.42; while (x < l + 6) { x += 14 + R() * 18; ctx.lineTo(Math.min(x, l + 6), h * (0.06 + R() * 0.08)); }
-      ctx.lineTo(l + 4, h); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(r - 4, h); ctx.lineTo(r - 6, h * 0.1);
-      x = r - 6; while (x < w) { x += 14 + R() * 22; ctx.lineTo(x, h * (0.04 + R() * 0.1)); }
-      ctx.lineTo(w, h); ctx.closePath(); ctx.fill();
-      ctx.fillStyle = "rgba(255,255,255,0.75)";
-      for (var m = 0; m < 9; m++) { ctx.beginPath(); ctx.ellipse(l + R() * (r - l), h * (0.86 + R() * 0.1), 30 + R() * 40, 10 + R() * 8, 0, 0, Math.PI * 2); ctx.fill(); }
-    }
-  };
-  var seeds = { sunset: 4, ridge: 11, falls: 27 };
-  function paint(c) {
-    var p = c.parentElement, w = p.clientWidth, h = p.clientHeight;
-    if (!w || !h || getComputedStyle(c).display === "none") return;
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
-    var ctx = c.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    scenes[c.dataset.scene](ctx, w, h, rng(seeds[c.dataset.scene]));
-  }
-  var all = document.querySelectorAll("canvas[data-scene]");
-  all.forEach(paint);
-  if (window.ResizeObserver) all.forEach(function (c) { new ResizeObserver(function () { paint(c); }).observe(c.parentElement); });
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { all.forEach(paint); });
+  function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
 })();
 </script>
 </body>
